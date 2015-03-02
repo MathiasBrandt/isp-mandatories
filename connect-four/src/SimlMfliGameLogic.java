@@ -1,7 +1,5 @@
 import com.sun.tools.javac.util.Pair;
 
-import java.util.Random;
-
 /**
  * Created by brandt on 02/03/15.
  */
@@ -13,7 +11,7 @@ public class SimlMfliGameLogic implements IGameLogic {
     private int playerID;
     private int[][] boardState;
     private int[] nextAvailableRow;
-    private Pair<Integer, Integer> lastCointPosition;   // column, row
+    private Pair<Integer, Integer> lastCoinPosition;   // column, row
 
     public SimlMfliGameLogic() {
 
@@ -44,7 +42,7 @@ public class SimlMfliGameLogic implements IGameLogic {
         nextAvailableRow[column] -= 1;
 
         // save last coin placement
-        lastCointPosition = new Pair(column, nextRow);
+        lastCoinPosition = new Pair(column, nextRow);
     }
 
     @Override
@@ -70,8 +68,8 @@ public class SimlMfliGameLogic implements IGameLogic {
 
     @Override
     public Winner gameFinished() {
-        int column = lastCointPosition.fst;
-        int row = lastCointPosition.snd;
+        int column = lastCoinPosition.fst;
+        int row = lastCoinPosition.snd;
         int playerID = boardState[column][row];
 
         // Boolean gameOver = checkHorizontal(playerID, column, row) || checkDiagonal(playerID, column, row);
@@ -91,38 +89,38 @@ public class SimlMfliGameLogic implements IGameLogic {
         // count is initially 1 because we placed a coin
         int count = 1;
         // always check to the right first
-        int increment = 1;
+        int offset = 1;
 
         while(count < WIN_CONDITION) {
-            System.out.println("increment is " + increment);
+            System.out.println("offset is " + offset);
 
             // bound checks
-            if(initialColumn + increment >= columns) {
+            if(initialColumn + offset >= columns) {
                 System.out.println("right bound exceeded");
                 // right bound exceeded
                 // check to the left of initial position
-                increment = -1;
+                offset = -1;
                 continue;
 
-            } else if(initialColumn + increment < 0) {
+            } else if(initialColumn + offset < 0) {
                 System.out.println("left bound exceeded");
                 // left bound exceeded, return false since we have already checked to the right
                 return false;
             }
 
-            if(boardState[initialColumn + increment][initialRow] == playerID) {
+            if(boardState[initialColumn + offset][initialRow] == playerID) {
                 // we found one more coin in succession of the previous or initial coin
                 count++;
                 System.out.println("Updating count to " + count);
 
-                // if increment is positive it means we are currently checking to the right so increase it.
+                // if offset is positive it means we are currently checking to the right so increase it.
                 // else, we are checking to the left so decrease it.
-                increment += increment > 0 ? 1 : -1;
+                offset += offset > 0 ? 1 : -1;
             } else {
-                if(increment > 0) {
+                if(offset > 0) {
                     System.out.println("right check done");
                     // right check is done, now check left
-                    increment = -1;
+                    offset = -1;
                 } else {
                     System.out.println("left check done");
                     // left check is done, already checked right, return false
@@ -140,18 +138,18 @@ public class SimlMfliGameLogic implements IGameLogic {
         // start counting from initialRow + 1, since we placed a coin in initialRow.
         // Also, that's why count starts at 1 instead of 0. We don't need to check initialRow.
         int count = 1;
-        int currentRow = initialRow + 1;
+        int offset = initialRow + 1;
 
         while(count < WIN_CONDITION) {
-            System.out.println("currentRow is " + currentRow);
+            System.out.println("currentRow is " + offset);
 
-            if(currentRow >= rows) {
+            if(offset >= rows) {
                 // lower bound exceeded
                 System.out.println("lower bound exceeded");
                 return false;
             }
 
-            if(boardState[initialColumn][currentRow] == playerID) {
+            if(boardState[initialColumn][offset] == playerID) {
                 // we found a coin in succession of the previous or initial coin.
                 count++;
                 System.out.println("updating count to " + count);
@@ -160,7 +158,7 @@ public class SimlMfliGameLogic implements IGameLogic {
                 return false;
             }
 
-            currentRow++;
+            offset++;
         }
 
         return true;
