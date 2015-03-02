@@ -101,11 +101,11 @@ public class SimlMfliGameLogic implements IGameLogic {
     }
 
     public Boolean checkVertical(int playerID, int initialColumn, int initialRow) {
-
+        return false;
     }
 
     public Boolean checkDiagonal(int playerID, int initialColumn, int initialRow) {
-
+        return false;
     }
 
     private Boolean isBoardFull() {
