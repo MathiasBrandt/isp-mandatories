@@ -1,14 +1,19 @@
+import com.sun.tools.javac.util.Pair;
+
 import java.util.Random;
 
 /**
  * Created by brandt on 02/03/15.
  */
 public class SimlMfliGameLogic implements IGameLogic {
+    private final int WIN_CONDITION = 4;
+
     private int columns = 0;
     private int rows = 0;
     private int playerID;
     private int[][] boardState;
     private int[] nextAvailableRow;
+    private Pair<Integer, Integer> lastCointPosition;   // column, row
 
     public SimlMfliGameLogic() {
 
@@ -31,14 +36,16 @@ public class SimlMfliGameLogic implements IGameLogic {
 
     @Override
     public void insertCoin(int column, int playerID) {
-        System.out.print(String.format("Column: %d, playerID: %d", column, playerID));
         // insert a token in the next available row for the specified column.
         int nextRow = nextAvailableRow[column];
-        System.out.print(nextRow);
+
         boardState[column][nextRow] = playerID;
 
         // update the next available row for the column.
         nextAvailableRow[column] -= 1;
+
+        // save last coin placement
+        lastCointPosition = new Pair(column, nextRow);
     }
 
     @Override
@@ -55,7 +62,54 @@ public class SimlMfliGameLogic implements IGameLogic {
 
     @Override
     public Winner gameFinished() {
-        return Winner.NOT_FINISHED;
+        int column = lastCointPosition.fst;
+        int row = lastCointPosition.snd;
+        int playerID = boardState[column][row];
+
+        Boolean gameOver = checkHorizontal(playerID, column, row);
+
+        if(gameOver) {
+            return playerID == 1 ? Winner.PLAYER1 : Winner.PLAYER2;
+        } else {
+            return isBoardFull() ? Winner.TIE : Winner.NOT_FINISHED;
+        }
+    }
+
+    public Boolean checkHorizontal(int playerID, int initialColumn, int initialRow) {
+        int count = 1;
+
+        // check right
+        for(int i = 1; i <= WIN_CONDITION; i++) {
+            if(initialColumn + i >= columns) {
+                // out of bounds
+                break;
+            }
+
+            if (boardState[initialColumn + i][initialRow] == playerID) {
+                count++;
+            } else {
+                break;
+            }
+        }
+
+        if(count == WIN_CONDITION) {
+            System.out.println("count is == win" + count);
+            return true;
+        }
+
+        return false;
+    }
+
+    public Boolean checkVertical(int playerID, int initialColumn, int initialRow) {
+
+    }
+
+    public Boolean checkDiagonal(int playerID, int initialColumn, int initialRow) {
+
+    }
+
+    private Boolean isBoardFull() {
+        return false;
     }
 
     private Boolean isColumnFull(int column) {
