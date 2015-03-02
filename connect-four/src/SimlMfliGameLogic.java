@@ -50,14 +50,16 @@ public class SimlMfliGameLogic implements IGameLogic {
 
     @Override
     public int decideNextMove() {
-        while(true) {
+        /*while(true) {
             Random random = new Random();
             int column = random.nextInt(columns);
 
             if (!isColumnFull(column)) {
                 return column;
             }
-        }
+        }*/
+
+        return 0;
     }
 
     @Override
@@ -76,28 +78,52 @@ public class SimlMfliGameLogic implements IGameLogic {
     }
 
     public Boolean checkHorizontal(int playerID, int initialColumn, int initialRow) {
+        System.out.println("---");
+
+        // count is initially 1 because we placed a coin
         int count = 1;
+        // always check to the right first
+        int increment = 1;
 
-        // check right
-        for(int i = 1; i <= WIN_CONDITION; i++) {
-            if(initialColumn + i >= columns) {
-                // out of bounds
-                break;
+        while(count < WIN_CONDITION) {
+            System.out.println("increment is " + increment);
+
+            // bound checks
+            if(initialColumn + increment >= columns) {
+                System.out.println("right bound exceeded");
+                // right bound exceeded
+                // check to the left of initial position
+                increment = -1;
+                continue;
+
+            } else if(initialColumn + increment < 0) {
+                System.out.println("left bound exceeded");
+                // left bound exceeded, return false since we have already checked to the right
+                return false;
             }
 
-            if (boardState[initialColumn + i][initialRow] == playerID) {
+            if(boardState[initialColumn + increment][initialRow] == playerID) {
+                // we found one more coin in succession of the previous or initial coin
                 count++;
+                System.out.println("Updating count to " + count);
+
+                // if increment is positive it means we are currently checking to the right so increase it.
+                // else, we are checking to the left so decrease it.
+                increment += increment > 0 ? 1 : -1;
             } else {
-                break;
+                if(increment > 0) {
+                    System.out.println("right check done");
+                    // right check is done, now check left
+                    increment = -1;
+                } else {
+                    System.out.println("left check done");
+                    // left check is done, already checked right, return false
+                    return false;
+                }
             }
         }
 
-        if(count == WIN_CONDITION) {
-            System.out.println("count is == win" + count);
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     public Boolean checkVertical(int playerID, int initialColumn, int initialRow) {
