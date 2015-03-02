@@ -38,7 +38,6 @@ public class SimlMfliGameLogic implements IGameLogic {
     public void insertCoin(int column, int playerID) {
         // insert a token in the next available row for the specified column.
         int nextRow = nextAvailableRow[column];
-
         boardState[column][nextRow] = playerID;
 
         // update the next available row for the column.
@@ -68,7 +67,8 @@ public class SimlMfliGameLogic implements IGameLogic {
         int row = lastCointPosition.snd;
         int playerID = boardState[column][row];
 
-        Boolean gameOver = checkHorizontal(playerID, column, row);
+        //Boolean gameOver = checkHorizontal(playerID, column, row);
+        Boolean gameOver = checkVertical(playerID, column, row);
 
         if(gameOver) {
             return playerID == 1 ? Winner.PLAYER1 : Winner.PLAYER2;
@@ -127,7 +127,35 @@ public class SimlMfliGameLogic implements IGameLogic {
     }
 
     public Boolean checkVertical(int playerID, int initialColumn, int initialRow) {
-        return false;
+        System.out.println("---");
+
+        // start counting from initialRow + 1, since we placed a coin in initialRow.
+        // Also, that's why count starts at 1 instead of 0. We don't need to check initialRow.
+        int count = 1;
+        int currentRow = initialRow + 1;
+
+        while(count < WIN_CONDITION) {
+            System.out.println("currentRow is " + currentRow);
+
+            if(currentRow >= rows) {
+                // lower bound exceeded
+                System.out.println("lower bound exceeded");
+                return false;
+            }
+
+            if(boardState[initialColumn][currentRow] == playerID) {
+                // we found a coin in succession of the previous or initial coin.
+                count++;
+                System.out.println("updating count to " + count);
+            } else {
+                // the coin does not match
+                return false;
+            }
+
+            currentRow++;
+        }
+
+        return true;
     }
 
     public Boolean checkDiagonal(int playerID, int initialColumn, int initialRow) {
