@@ -302,6 +302,10 @@ public class SimlMfliGameLogic implements IGameLogic {
         return columns;
     }
 
+    public int getRowCount() {
+        return rows;
+    }
+
     public Pair<Integer, Integer> getLastCoinPosition() {
         return lastCoinPosition;
     }
