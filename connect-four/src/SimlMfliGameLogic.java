@@ -72,7 +72,7 @@ public class SimlMfliGameLogic implements IGameLogic {
         int row = lastCoinPosition.snd;
         int playerID = boardState[column][row];
 
-        Boolean gameOver = checkHorizontal(playerID, column, row) || checkVertical(playerID, column, row) || checkDiagonalTwo(playerID, column, row) || checkDiagonalOne(playerID, column, row);
+        Boolean gameOver = checkHorizontal(playerID, column, row) || checkVertical(playerID, column, row) || checkDiagonalOne(playerID, column, row) || checkDiagonalTwo(playerID, column, row);
 
         if(gameOver) {
             return playerID == 1 ? Winner.PLAYER1 : Winner.PLAYER2;
