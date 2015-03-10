@@ -26,6 +26,8 @@ public class MiniMaxer {
             for(int i = 0; i < logic.getColumnCount(); i++) {
                 if(!logic.isColumnFull(i)) {
                     values[i] = maxValue();
+
+                    logic.resetToOriginalState();
                 }
             }
 
@@ -95,8 +97,8 @@ public class MiniMaxer {
                 return UTILITY_MAX;
             case TIE:
                 return UTILITY_TIE;
-            case NOT_FINISHED:
-                return -1;
         }
+
+        return -1;
     }
 }

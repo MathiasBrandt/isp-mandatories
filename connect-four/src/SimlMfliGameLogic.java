@@ -1,6 +1,7 @@
 import com.sun.tools.javac.util.Pair;
 
 import java.io.Console;
+import java.util.Arrays;
 
 /**
  * Created by brandt on 02/03/15.
@@ -11,12 +12,14 @@ public class SimlMfliGameLogic implements IGameLogic {
     private int columns = 0;
     private int rows = 0;
     private int playerID;
+    private int[][] savedBoardState;
     private int[][] boardState;
     private int[] nextAvailableRow;
     private Pair<Integer, Integer> lastCoinPosition;   // column, row
+    private MiniMaxer miniMaxer;
 
     public SimlMfliGameLogic() {
-
+        miniMaxer = new MiniMaxer(this);
     }
 
     @Override
@@ -25,6 +28,7 @@ public class SimlMfliGameLogic implements IGameLogic {
         this.rows = rows;
         this.playerID = playerID;
 
+        savedBoardState = new int[columns][rows];
         boardState = new int[columns][rows];
         nextAvailableRow = new int[columns];
 
@@ -49,8 +53,11 @@ public class SimlMfliGameLogic implements IGameLogic {
 
     @Override
     public int decideNextMove() {
-        // TODO: remember to preserve the original board state before calling MiniMaxer.
-        return 0;
+        saveState();
+        int bestColumn = miniMaxer.minimaxDecision();
+        resetToOriginalState();
+
+        return bestColumn;
     }
 
     @Override
@@ -300,6 +307,18 @@ public class SimlMfliGameLogic implements IGameLogic {
             return 2;
         } else {
             return 1;
+        }
+    }
+
+    public void saveState() {
+        for(int i = 0; i < columns; i++) {
+            savedBoardState[i] = Arrays.copyOf(boardState[i], boardState[i].length);
+        }
+    }
+
+    public void resetToOriginalState() {
+        for(int i = 0; i < columns; i++) {
+            boardState[i] = Arrays.copyOf(savedBoardState[i], savedBoardState[i].length);
         }
     }
 }
