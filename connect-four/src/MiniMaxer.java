@@ -19,11 +19,24 @@ public class MiniMaxer {
     }
 
     private double minValue() {
-        return UTILITY_MIN;
+        double utility = getUtility();
+        if(utility > 0) {
+            return utility;
+        }
+
+        double value = Double.MIN_VALUE;
+        for (int i = 0; i < logic.getColumnCount(); i++) {
+            if (!logic.isColumnFull(i)) {
+                logic.insertCoin(i, PLAYER_MIN);
+                value = Double.min(value, maxValue());
+            }
+        }
+
+        return value;
     }
 
     private double maxValue() {
-        double utility = utility();
+        double utility = getUtility();
         if(utility > 0) {
             return utility;
         }
@@ -35,9 +48,11 @@ public class MiniMaxer {
                 value = Double.max(value, minValue());
             }
         }
+
+        return value;
     }
 
-    private double utility() {
+    private double getUtility() {
         switch(logic.gameFinished()) {
             case PLAYER1:
                 return UTILITY_MIN;
