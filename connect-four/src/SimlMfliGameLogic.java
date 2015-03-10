@@ -13,7 +13,7 @@ public class SimlMfliGameLogic implements IGameLogic {
     private MiniMaxer miniMaxer;
 
     public SimlMfliGameLogic() {
-        miniMaxer = new MiniMaxer(this);
+        miniMaxer = new MiniMaxer();
     }
 
     @Override
@@ -28,7 +28,7 @@ public class SimlMfliGameLogic implements IGameLogic {
 
     @Override
     public int decideNextMove() {
-        int bestColumn = miniMaxer.minimaxDecision();
+        int bestColumn = miniMaxer.minimaxDecision(gameState.copyState());
 
         System.out.println("MiniMax chose: " + bestColumn);
 
@@ -37,8 +37,7 @@ public class SimlMfliGameLogic implements IGameLogic {
 
     @Override
     public Winner gameFinished() {
-
+       //  return Winner.NOT_FINISHED;
+       return gameState.gameFinished();
     }
-
-
 }

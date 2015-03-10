@@ -21,11 +21,13 @@ public class GameState {
         board = new int[columns][rows];
     }
 
-    public GameState(int columns, int rows, int[][] board) {
+    public GameState(int columns, int rows, int[][] board, Pair<Integer, Integer> lastCoinPosition, int lastPlayer) {
         this.columns = columns;
         this.rows = rows;
 
         this.board = board;
+        this.lastCoinPosition = lastCoinPosition;
+        this.lastPlayer = lastPlayer;
     }
 
     public int getColumnCount() {
@@ -98,7 +100,7 @@ public class GameState {
             newState[i] = Arrays.copyOf(board[i], board[i].length);
         }
 
-        return new GameState(columns, rows, newState);
+        return new GameState(columns, rows, newState, lastCoinPosition, lastPlayer);
     }
 
     public Boolean checkHorizontal(int playerID, int initialColumn, int initialRow) {
