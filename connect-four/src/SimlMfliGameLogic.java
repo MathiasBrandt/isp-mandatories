@@ -49,10 +49,9 @@ public class SimlMfliGameLogic implements IGameLogic {
 
     @Override
     public int decideNextMove() {
+        // TODO: remember to preserve the original board state before calling MiniMaxer.
         return 0;
     }
-
-
 
     @Override
     public Winner gameFinished() {
@@ -282,7 +281,15 @@ public class SimlMfliGameLogic implements IGameLogic {
         return true;
     }
 
-    private Boolean isColumnFull(int column) {
+    public Boolean isColumnFull(int column) {
         return nextAvailableRow[column] == -1;
+    }
+
+    public int getColumnCount() {
+        return columns;
+    }
+
+    public Pair<Integer, Integer> getLastCoinPosition() {
+        return lastCoinPosition;
     }
 }

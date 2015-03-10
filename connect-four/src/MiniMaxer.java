@@ -4,22 +4,49 @@ import com.sun.tools.javac.util.Pair;
  * Created by brandt on 10/03/15.
  */
 public class MiniMaxer {
-    public final int UTILITY_MIN = 1;
-    public final int UTILITY_MAX = 2;
+    public final double UTILITY_MIN = 1.0;
+    public final double UTILITY_MAX = 2.0;
+    public final double UTILITY_TIE = 1.5;
+    public final int PLAYER_MIN = 1;
+    public final int PLAYER_MAX = 2;
 
-    public Pair<Integer, Integer> minimaxDecision() {
+    private SimlMfliGameLogic logic;
+
+    public Pair<Integer, Integer> minimaxDecision(SimlMfliGameLogic logic) {
+        this.logic = logic;
+
         return null;
     }
 
-    private int minValue(int column, int row) {
+    private double minValue() {
         return UTILITY_MIN;
     }
 
-    private int maxValue(int column, int row) {
-        return UTILITY_MAX;
+    private double maxValue() {
+        double utility = utility();
+        if(utility > 0) {
+            return utility;
+        }
+
+        double value = Double.MAX_VALUE;
+        for(int i = 0; i < logic.getColumnCount(); i++) {
+            if(!logic.isColumnFull(i)) {
+                logic.insertCoin(i, PLAYER_MAX);
+                value = Double.max(value, minValue());
+            }
+        }
     }
 
-    private Boolean terminalTest(int column, int row) {
-        return false;
+    private double utility() {
+        switch(logic.gameFinished()) {
+            case PLAYER1:
+                return UTILITY_MIN;
+            case PLAYER2:
+                return UTILITY_MAX;
+            case TIE:
+                return UTILITY_TIE;
+            case NOT_FINISHED:
+                return -1;
+        }
     }
 }
