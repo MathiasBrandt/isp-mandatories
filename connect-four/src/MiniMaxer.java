@@ -18,7 +18,7 @@ public class MiniMaxer {
 
     public int minimaxDecision() {
         int player = logic.getNextPlayer();
-
+        System.out.println("Player: " + player);
         double[] values = new double[logic.getColumnCount()];
         int action = -1;
 
