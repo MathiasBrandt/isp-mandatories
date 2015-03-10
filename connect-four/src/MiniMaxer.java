@@ -41,6 +41,8 @@ public class MiniMaxer {
             for(int i = 0; i < logic.getColumnCount(); i++) {
                 if(!logic.isColumnFull(i)) {
                     values[i] = minValue();
+
+                    logic.resetToOriginalState();
                 }
             }
 
@@ -61,14 +63,13 @@ public class MiniMaxer {
             return utility;
         }
 
-        double value = Double.MIN_VALUE;
+        double value = Double.MAX_VALUE;
         for (int i = 0; i < logic.getColumnCount(); i++) {
             if (!logic.isColumnFull(i)) {
                 logic.insertCoin(i, PLAYER_MIN);
                 value = Double.min(value, maxValue());
             }
         }
-
         return value;
     }
 
@@ -78,14 +79,13 @@ public class MiniMaxer {
             return utility;
         }
 
-        double value = Double.MAX_VALUE;
+        double value = Double.MIN_VALUE;
         for(int i = 0; i < logic.getColumnCount(); i++) {
             if(!logic.isColumnFull(i)) {
                 logic.insertCoin(i, PLAYER_MAX);
                 value = Double.max(value, minValue());
             }
         }
-
         return value;
     }
 
