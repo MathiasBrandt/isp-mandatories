@@ -14,7 +14,6 @@ public class SimlMfliGameLogic implements IGameLogic {
     private int playerID;
     private int[][] savedBoardState;
     private int[][] boardState;
-    private int[] nextAvailableRow;
     private Pair<Integer, Integer> lastCoinPosition;   // column, row
     private MiniMaxer miniMaxer;
 
@@ -30,22 +29,13 @@ public class SimlMfliGameLogic implements IGameLogic {
 
         savedBoardState = new int[columns][rows];
         boardState = new int[columns][rows];
-        nextAvailableRow = new int[columns];
-
-        // initialize all values in nextAvailableRow to row count.
-        for(int i = 0; i < nextAvailableRow.length; i++) {
-            nextAvailableRow[i] = rows - 1;
-        }
     }
 
     @Override
     public void insertCoin(int column, int playerID) {
         // insert a token in the next available row for the specified column.
-        int nextRow = nextAvailableRow[column];
+        int nextRow = getNextAvailableRow(column);
         boardState[column][nextRow] = playerID;
-
-        // update the next available row for the column.
-        nextAvailableRow[column] -= 1;
 
         // save last coin placement
         lastCoinPosition = new Pair(column, nextRow);
@@ -290,7 +280,17 @@ public class SimlMfliGameLogic implements IGameLogic {
     }
 
     public Boolean isColumnFull(int column) {
-        return nextAvailableRow[column] == -1;
+        return getNextAvailableRow(column) < 0;
+    }
+
+    public int getNextAvailableRow(int column) {
+        for(int i = rows-1; i >= 0; i--) {
+            if(boardState[column][i] == 0) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     public int getColumnCount() {
