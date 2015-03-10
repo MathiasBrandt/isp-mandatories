@@ -16,6 +16,7 @@ public class SimlMfliGameLogic implements IGameLogic {
     private int[][] boardState;
     private Pair<Integer, Integer> lastCoinPosition;   // column, row
     private MiniMaxer miniMaxer;
+    private int lastPlayer;
 
     public SimlMfliGameLogic() {
         miniMaxer = new MiniMaxer(this);
@@ -37,6 +38,7 @@ public class SimlMfliGameLogic implements IGameLogic {
         int nextRow = getNextAvailableRow(column);
         boardState[column][nextRow] = playerID;
 
+        lastPlayer = playerID;
         // save last coin placement
         lastCoinPosition = new Pair(column, nextRow);
     }
@@ -54,6 +56,9 @@ public class SimlMfliGameLogic implements IGameLogic {
 
     @Override
     public Winner gameFinished() {
+        if(lastCoinPosition == null){
+            return Winner.NOT_FINISHED;
+        }
         int column = lastCoinPosition.fst;
         int row = lastCoinPosition.snd;
         int playerID = boardState[column][row];
@@ -302,13 +307,7 @@ public class SimlMfliGameLogic implements IGameLogic {
     }
 
     public int getNextPlayer() {
-        int lastPlayer = boardState[lastCoinPosition.fst][lastCoinPosition.snd];
-
-        if(lastPlayer == 1) {
-            return 2;
-        } else {
-            return 1;
-        }
+        return lastPlayer;
     }
 
     public void saveState() {
