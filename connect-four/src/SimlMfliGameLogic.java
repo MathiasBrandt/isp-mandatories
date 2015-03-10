@@ -292,4 +292,14 @@ public class SimlMfliGameLogic implements IGameLogic {
     public Pair<Integer, Integer> getLastCoinPosition() {
         return lastCoinPosition;
     }
+
+    public int getNextPlayer() {
+        int lastPlayer = boardState[lastCoinPosition.fst][lastCoinPosition.snd];
+
+        if(lastPlayer == 1) {
+            return 2;
+        } else {
+            return 1;
+        }
+    }
 }

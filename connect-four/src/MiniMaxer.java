@@ -12,10 +12,45 @@ public class MiniMaxer {
 
     private SimlMfliGameLogic logic;
 
-    public Pair<Integer, Integer> minimaxDecision(SimlMfliGameLogic logic) {
+    public MiniMaxer(SimlMfliGameLogic logic) {
         this.logic = logic;
+    }
 
-        return null;
+    public int minimaxDecision() {
+        int player = logic.getNextPlayer();
+
+        double[] values = new double[logic.getColumnCount()];
+        int action = -1;
+
+        if(player == PLAYER_MIN) {
+            for(int i = 0; i < logic.getColumnCount(); i++) {
+                if(!logic.isColumnFull(i)) {
+                    values[i] = maxValue();
+                }
+            }
+
+            double minValue = Double.MAX_VALUE;
+            for(int i = 0; i < values.length; i++) {
+                if(values[i] < minValue) {
+                    action = i;
+                }
+            }
+        } else {
+            for(int i = 0; i < logic.getColumnCount(); i++) {
+                if(!logic.isColumnFull(i)) {
+                    values[i] = minValue();
+                }
+            }
+
+            double maxValue = Double.MIN_VALUE;
+            for(int i = 0; i < values.length; i++) {
+                if(values[i] > maxValue) {
+                    action = i;
+                }
+            }
+        }
+
+        return action;
     }
 
     private double minValue() {
