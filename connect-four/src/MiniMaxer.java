@@ -16,7 +16,7 @@ public class MiniMaxer {
         this.logic = logic;
     }
 
-    public int minimaxDecision(int[][] boardState) {
+    public int minimaxDecision(GameState state) {
         int player = logic.getNextPlayer();
         System.out.println("Player: " + player);
         double[] values = new double[logic.getColumnCount()];
@@ -25,7 +25,7 @@ public class MiniMaxer {
         if(player == PLAYER_MIN) {
             for(int i = 0; i < logic.getColumnCount(); i++) {
                 if(!logic.isColumnFull(i)) {
-                    values[i] = maxValue(boardState);
+                    values[i] = maxValue(state);
 
                     logic.resetToOriginalState();
                 }
@@ -40,7 +40,7 @@ public class MiniMaxer {
         } else {
             for(int i = 0; i < logic.getColumnCount(); i++) {
                 if(!logic.isColumnFull(i)) {
-                    values[i] = minValue(boardState);
+                    values[i] = minValue(state);
 
                     logic.resetToOriginalState();
                 }
@@ -57,8 +57,8 @@ public class MiniMaxer {
         return action;
     }
 
-    private double minValue(int[][] boardState) {
-        double utility = getUtility(boardState);
+    private double minValue(GameState state) {
+        double utility = getUtility(state);
         if(utility > 0) {
             return utility;
         }
@@ -67,15 +67,15 @@ public class MiniMaxer {
         for (int i = 0; i < logic.getColumnCount(); i++) {
             if (!logic.isColumnFull(i)) {
                 // logic.insertCoin(i, PLAYER_MIN);
-                logic.insertCoin(boardState);
-                value = Double.min(value, maxValue(copyState(boardState)));
+                logic.insertCoin(state);
+                value = Double.min(value, maxValue(state.copy()));
             }
         }
         return value;
     }
 
-    private double maxValue(int[][] boardState) {
-        double utility = getUtility(boardState);
+    private double maxValue(GameState state) {
+        double utility = getUtility(state);
         if(utility > 0) {
             return utility;
         }
@@ -84,14 +84,14 @@ public class MiniMaxer {
         for(int i = 0; i < logic.getColumnCount(); i++) {
             if(!logic.isColumnFull(i)) {
                 //logic.insertCoin(i, PLAYER_MAX);
-                logic.insertCoin(boardState);
-                value = Double.max(value, minValue(copyState(boardState)));
+                logic.insertCoin(state);
+                value = Double.max(value, minValue(state.copy()));
             }
         }
         return value;
     }
 
-    private double getUtility(int[][] boardState) {
+    private double getUtility(GameState boardState) {
         switch(logic.gameFinished()) {
             case PLAYER1:
                 return UTILITY_MIN;
@@ -102,14 +102,5 @@ public class MiniMaxer {
         }
 
         return -1;
-    }
-
-    public int[][] copyState(int[][] currentState) {
-        int[][] result = new int[logic.getColumnCount()][logic.getRowCount()];
-        for(int i = 0; i < currentState.length; i++) {
-            result[i] = Arrays.copyOf(currentState[i], currentState[i].length);
-        }
-
-        return result;
     }
 }
