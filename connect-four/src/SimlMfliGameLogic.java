@@ -285,7 +285,13 @@ public class SimlMfliGameLogic implements IGameLogic {
     }
 
     private Boolean isBoardFull() {
-        return false;
+        for(int i = 0; i < columns; i++) {
+            if(!isColumnFull(i)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private Boolean isColumnFull(int column) {
