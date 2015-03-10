@@ -72,9 +72,7 @@ public class SimlMfliGameLogic implements IGameLogic {
         int row = lastCoinPosition.snd;
         int playerID = boardState[column][row];
 
-        // Boolean gameOver = checkHorizontal(playerID, column, row) || checkDiagonal(playerID, column, row);
-//        Boolean gameOver = checkDiagonalOne(playerID, column, row);
-        Boolean gameOver = checkDiagonalTwo(playerID, column, row);
+        Boolean gameOver = checkHorizontal(playerID, column, row) || checkVertical(playerID, column, row) || checkDiagonalTwo(playerID, column, row) || checkDiagonalOne(playerID, column, row);
 
         if(gameOver) {
             return playerID == 1 ? Winner.PLAYER1 : Winner.PLAYER2;
@@ -164,6 +162,13 @@ public class SimlMfliGameLogic implements IGameLogic {
         return true;
     }
 
+    /**
+     * Checks if the player has connected four on the diagonal going downwards from left to right.
+     * @param playerID
+     * @param initialColumn
+     * @param initialRow
+     * @return
+     */
     public Boolean checkDiagonalOne(int playerID, int initialColumn, int initialRow) {
         int count = 1;
         int offset = 1;
@@ -173,21 +178,20 @@ public class SimlMfliGameLogic implements IGameLogic {
         // Check
         while(count < WIN_CONDITION) {
             System.out.println(count);
+            // If we are done checking left and right, stop.
             if(!checkLeft && !checkRight){
                 return false;
             }
 
-
-
-
-            if(initialRow - offset <= 0 || initialColumn - offset <= 0){
+            //
+            if(initialRow - offset < 0 || initialColumn - offset < 0){
                 // out of bounds on the left hand side.
                 System.out.println("Not checking left anymore");
                 System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
                 checkLeft = false;
             }
             if(initialRow + offset >= rows || initialColumn + offset >= columns){
-                // out of bounds on the left hand side.
+                // Check bounds on the right hand side.
                 checkRight = false;
                 System.out.println("Not checking right anymore");
                 System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
@@ -220,6 +224,13 @@ public class SimlMfliGameLogic implements IGameLogic {
         return false;
     }
 
+    /**
+     * Checks if the player has connected four on the diagonal going upwards from left to right.
+     * @param playerID
+     * @param initialColumn
+     * @param initialRow
+     * @return
+     */
     public Boolean checkDiagonalTwo(int playerID, int initialColumn, int initialRow) {
         int count = 1;
         int offset = 1;
@@ -232,14 +243,14 @@ public class SimlMfliGameLogic implements IGameLogic {
                 return false;
             }
             
-            if(initialRow + offset >= rows || initialColumn - offset <= 0){
+            if(initialRow + offset >= rows || initialColumn - offset < 0){
                 // out of bounds on the left hand side.
                 System.out.println("Not checking left anymore");
                 System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
                 checkLeft = false;
             }
-            if(initialRow - offset <= 0 || initialColumn + offset >= columns){
-                // out of bounds on the left hand side.
+            if(initialRow - offset < 0 || initialColumn + offset >= columns){
+                // out of bounds on the right hand side.
                 checkRight = false;
                 System.out.println("Not checking right anymore");
                 System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
