@@ -1,5 +1,7 @@
 import com.sun.tools.javac.util.Pair;
 
+import java.io.Console;
+
 /**
  * Created by brandt on 02/03/15.
  */
@@ -47,24 +49,10 @@ public class SimlMfliGameLogic implements IGameLogic {
 
     @Override
     public int decideNextMove() {
-//        while(true) {
-//            Random random = new Random();
-//            int column = random.nextInt(columns);
-//
-//            if (!isColumnFull(column)) {
-//                return column;
-//            }
-//        }
-        if (isColumnFull(columns - 1)){
-            return columns - 2;
-        }
-        if(isColumnFull(0)){
-            return columns - 1;
-        } else {
-            return 0;
-        }
-
+        return 0;
     }
+
+
 
     @Override
     public Winner gameFinished() {
