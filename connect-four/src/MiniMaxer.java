@@ -68,18 +68,18 @@ public class MiniMaxer {
             return utility;
         }
 
-        double value = Double.MAX_VALUE;
+        double value = Double.POSITIVE_INFINITY;
         for (int i = 0; i < state.getColumnCount(); i++) {
             if (!state.isColumnFull(i)) {
                 state.insertCoin(i, PLAYER_MIN);
                 value = Double.min(value, maxValue(state.copyState(), alpha, beta));
 
-                beta = Double.min(beta, value);
-
                 if(value <= alpha){
                     System.out.println("Pruning");
                     return value;
                 }
+
+                beta = Double.min(beta, value);
             }
         }
 
@@ -97,14 +97,13 @@ public class MiniMaxer {
             if(!state.isColumnFull(i)) {
                 state.insertCoin(i, PLAYER_MAX);
                 value = Double.max(value, minValue(state.copyState(), alpha, beta));
-                System.out.println(value + " " + beta);
-
-                alpha = Double.max(alpha, value); // TODO: overall alpha or the one supplied?
 
                 if(value >= beta){
                     System.out.println("Pruning");
                     return value;
                 }
+
+                alpha = Double.max(alpha, value);
 
             }
         }
