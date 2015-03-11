@@ -177,64 +177,17 @@ public class MiniMaxer {
         int initialRow = state.getLastCoinPosition().snd;
         int playerID = state.getBoard()[initialColumn][initialRow];
 
-        int count = state.checkDiagonalOne(playerID, initialColumn, initialRow) + state.checkDiagonalTwo(playerID, initialColumn, initialRow);
+        int count = Integer.max(state.checkDiagonalOne(playerID, initialColumn, initialRow), state.checkDiagonalTwo(playerID, initialColumn, initialRow));
+        count = Integer.max(count, state.checkHorizontal(playerID, initialColumn, initialRow));
+        count = Integer.max(count, state.checkVertical(playerID, initialColumn, initialRow));
 
         if(playerID == this.PLAYER_MIN){
+            System.out.println("Count = " + count * -1);
             return count *= -1;
+        } else {
+            System.out.println("Count = " + count);
+            return count;
         }
-
-        return 0;
-
-
-//
-//        int count = 0;
-//        boolean checkHorizontally = true;
-//        boolean checkDiagonallyUp = true;
-//        boolean checkDiagonallyDown = true;
-//
-//        // check right and up
-//        for(int i = column; i < state.getColumnCount() - 1; i++){
-//            // No longer looking at a consecutive coin, so stop counting.
-//            if(state.getBoard()[i][row] != playerID){
-//                break;
-//            } else {
-//                count++;
-//            }
-//        }
-//
-//
-//        checkHorizontally = true;
-//        checkDiagonallyUp = true;
-//        checkDiagonallyDown = true;
-//
-//        // Check left and diagonally down
-//        for (int i = column; i >= 0; i--){
-//            // left
-//            if(state.getBoard()[i][row] != playerID){
-//                checkHorizontally = false;
-//            } else if(checkHorizontally) {
-//                count++;
-//            }
-//            // left and up
-//            if(state.getBoard()[i][row + i] != playerID){
-//                checkHorizontally = false;
-//            } else if(checkHorizontally) {
-//                count++;
-//            }
-//            // left and down
-//            if(state.getBoard()[i][row - i] != playerID){
-//                checkHorizontally = false;
-//            } else if(checkHorizontally) {
-//                count++;
-//            }
-//        }
-
-        // If player is Min, negate the result
-//        if(playerID == this.PLAYER_MIN){
-//            return count *= -1;
-//        }
-//
-//        return 0;
     }
 
     /**
@@ -250,12 +203,36 @@ public class MiniMaxer {
 
     /**
      * Looks up static evaluation table and returns a value based on the {@code} lastCoinPosition.
+     * Credit goes to: http://programmers.stackexchange.com/questions/263514/why-does-this-evaluation-function-work-in-a-connect-four-game-in-java
      * @param state
      * @return
      */
     public int coinPositionValue(GameState state){
+        // For now, this is only implemented for a 7x6 board.
+        if(!(state.getColumnCount() == 7) || !(state.getRowCount() == 6)){
+            return 0;
+        }
 
-        return 0;
+        int[][] evaluationTable = {{3, 4, 5, 7, 5, 4, 3},
+                {4, 6, 8, 10, 8, 6, 4},
+                {5, 8, 11, 13, 11, 8, 5},
+                {5, 8, 11, 13, 11, 8, 5},
+                {4, 6, 8, 10, 8, 6, 4},
+                {3, 4, 5, 7, 5, 4, 3}};
+
+        int initialColumn = state.getLastCoinPosition().fst;
+        int initialRow = state.getLastCoinPosition().snd;
+        int playerID = state.getBoard()[initialColumn][initialRow];
+
+        int result = 0;
+
+        if(playerID == PLAYER_MIN){
+            result = -evaluationTable[initialColumn][initialRow];
+            return result;
+        } else {
+            result = evaluationTable[initialColumn][initialRow];
+            return result;
+        }
     }
 
     /**
