@@ -25,28 +25,36 @@ public class MiniMaxer {
             for(int i = 0; i < state.getColumnCount(); i++) {
                 if(!state.isColumnFull(i)) {
                     values[i] = maxValue(state.copyState());
+                } else {
+                    values[i] = Double.NaN;
                 }
             }
 
             double minValue = Double.MAX_VALUE;
             for(int i = 0; i < values.length; i++) {
+                System.out.println(values[i]);
+
                 if(values[i] < minValue) {
-                    System.out.println(values[i]);
                     action = i;
+                    minValue = values[i];
                 }
             }
         } else {
             for(int i = 0; i < state.getColumnCount(); i++) {
                 if(!state.isColumnFull(i)) {
                     values[i] = minValue(state.copyState());
+                } else {
+                    values[i] = Double.NaN;
                 }
             }
 
             double maxValue = Double.MIN_VALUE;
             for(int i = 0; i < values.length; i++) {
+                System.out.println(values[i]);
+
                 if(values[i] > maxValue) {
-                    System.out.println(values[i]);
                     action = i;
+                    maxValue = values[i];
                 }
             }
         }

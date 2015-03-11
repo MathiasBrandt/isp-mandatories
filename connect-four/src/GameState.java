@@ -41,7 +41,7 @@ public class GameState {
     public void insertCoin(int column, int playerId) {
         // insert a token in the next available row for the specified column.
         int row = getNextAvailableRow(column);
-        System.out.println("Placing coin in col: " + column + " row: " + row);
+        //System.out.println("Placing coin in col: " + column + " row: " + row);
 
         board[column][row] = playerId;
 
