@@ -35,7 +35,8 @@ public class SimlMfliGameLogic implements IGameLogic {
 
         System.out.println("MiniMax chose: " + bestColumn);
         long finish = System.nanoTime();
-        System.out.println("Time taken: " + (finish - start));
+        long elapsedTime = finish - start;
+        System.out.println("Time taken: " + (double)(elapsedTime)/ 1000000000.0);
         return bestColumn;
     }
 
