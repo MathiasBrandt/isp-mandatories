@@ -11,7 +11,7 @@ public class MiniMaxer {
     public final int PLAYER_MIN = 1;
     public final int PLAYER_MAX = 2;
     public int aiPlayerId;
-    public final int CUTOFF = 100;
+    public final int CUTOFF = 10;
 
     public MiniMaxer(int playerId) {
         aiPlayerId = playerId;
@@ -181,6 +181,14 @@ public class MiniMaxer {
         int count = Integer.max(state.checkDiagonalOne(playerID, initialColumn, initialRow), state.checkDiagonalTwo(playerID, initialColumn, initialRow));
         count = Integer.max(count, state.checkHorizontal(playerID, initialColumn, initialRow));
         count = Integer.max(count, state.checkVertical(playerID, initialColumn, initialRow));
+
+        if(count >= state.WIN_CONDITION){
+            if(playerID == this.PLAYER_MIN){
+                return (int)UTILITY_MIN;
+            } else {
+                return (int)UTILITY_MAX;
+            }
+        }
 
         if(playerID == this.PLAYER_MIN){
             return count *= -1;
