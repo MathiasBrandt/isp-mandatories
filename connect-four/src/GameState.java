@@ -22,9 +22,9 @@ public class GameState {
     }
 
     //public GameState(int columns, int rows, int[][] board, Pair<Integer, Integer> lastCoinPosition, int lastPlayer) {
-    public GameState(int columns, int rows, int[][] board, Pair<Integer, Integer> lastCoinPosition) {
-        this.columns = columns;
-        this.rows = rows;
+    public GameState(int[][] board, Pair<Integer, Integer> lastCoinPosition) {
+        this.columns = board.length;
+        this.rows = board[0].length;
 
         this.board = board;
         this.lastCoinPosition = lastCoinPosition;
@@ -77,7 +77,7 @@ public class GameState {
         int row = lastCoinPosition.snd;
         int playerID = board[column][row];
 
-        int horizontalCount = checkHorizontal(playerID, column, row);
+        int horizontalCount = checkHorizontal(playerID, column, row, false);
         int verticalCount = checkVertical(playerID, column, row);
         int diagonalOneCount = checkDiagonalOne(playerID, column, row);
         int diagonalTwoCount = checkDiagonalTwo(playerID, column, row);
@@ -116,7 +116,7 @@ public class GameState {
         }
 
         //return new GameState(columns, rows, newState, lastCoinPosition, lastPlayer);
-        return new GameState(columns, rows, newState, lastCoinPosition);
+        return new GameState(newState, lastCoinPosition);
     }
 
     public void printState() {
@@ -138,7 +138,7 @@ public class GameState {
      * @param initialRow
      * @return
      */
-    public int checkHorizontal(int playerID, int initialColumn, int initialRow) {
+    public int checkHorizontal(int playerID, int initialColumn, int initialRow, boolean includeBlanks) {
         // count is initially 1 because we placed a coin
         int count = 1;
         int offset = 1;
@@ -161,6 +161,9 @@ public class GameState {
                 if(board[initialColumn - offset][initialRow] == playerID) {
                     // we found one more coin in succession of the previous coin
                     count++;
+                } else if(includeBlanks && board[initialColumn - offset][initialRow] == MiniMaxer.PLAYER_BLANK) {
+                    // we are also counting blank, or "available" spots on the board
+                    count++;
                 } else {
                     checkLeft = false;
                 }
@@ -168,6 +171,8 @@ public class GameState {
 
             if(checkRight) {
                 if(board[initialColumn + offset][initialRow] == playerID) {
+                    count++;
+                } else if(includeBlanks && board[initialColumn + offset][initialRow] == MiniMaxer.PLAYER_BLANK) {
                     count++;
                 } else {
                     checkRight = false;
@@ -309,5 +314,46 @@ public class GameState {
         }
 
         return count;
+    }
+
+    public static void main(String[] args) {
+        int[][] b1 = {{1}};
+        GameState g1 = new GameState(b1, null);
+        GameState.debugPrint(g1, 0);
+
+        int[][] b2 = {{1}, {0}};
+        GameState g2 = new GameState(b2, null);
+        GameState.debugPrint(g2, 0);
+
+        int[][] b3 = {{1}, {0}, {0}};
+        GameState g3 = new GameState(b3, null);
+        GameState.debugPrint(g3, 0);
+
+        int[][] b4 = {{1}, {0}, {0}, {0}};
+        GameState g4 = new GameState(b4, null);
+        GameState.debugPrint(g4, 0);
+
+        int[][] b5 = {{0}, {1}, {0}, {0}, {0}};
+        GameState g5 = new GameState(b5, null);
+        GameState.debugPrint(g5, 1);
+
+        int[][] b6 = {{0}, {0}, {1}, {0}, {0}, {0}};
+        GameState g6 = new GameState(b6, null);
+        GameState.debugPrint(g6, 2);
+
+        int[][] b7 = {{0}, {0}, {0}, {1}, {0}, {0}, {0}};
+        GameState g7 = new GameState(b7, null);
+        GameState.debugPrint(g7, 3);
+
+        int[][] b8 = {{0}, {0}, {2}, {0}, {1}, {0}, {0}, {0}};
+        GameState g8 = new GameState(b8, null);
+        GameState.debugPrint(g8, 4);
+    }
+
+    public static void debugPrint(GameState g, int col) {
+        g.printState();
+        System.out.println("successive coins      : " + g.checkHorizontal(1, col, 0, false));
+        System.out.println("including blanks      : " + g.checkHorizontal(1, col, 0, true));
+        System.out.println("possible win positions: " + (g.checkHorizontal(1, col, 0, true) - g.WIN_CONDITION + 1));
     }
 }
