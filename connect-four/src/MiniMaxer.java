@@ -7,6 +7,7 @@ public class MiniMaxer {
     public final double UTILITY_MIN = -100;
     public final double UTILITY_MAX = 100;
     public final double UTILITY_TIE = 0;
+    public static final int PLAYER_BLANK = 0;
     public final int PLAYER_MIN = 1;
     public final int PLAYER_MAX = 2;
     public int aiPlayerId;
