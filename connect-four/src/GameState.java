@@ -92,10 +92,6 @@ public class GameState {
         return getNextAvailableRow(column) < 0;
     }
 
-    /*public int getNextPlayer() {
-        return lastPlayer;
-    }*/
-
     public GameState copyState() {
         int[][] newState = new int[columns][rows];
 
@@ -108,7 +104,7 @@ public class GameState {
 
     public void printState() {
         for(int i = 0; i < rows; i++) {
-            System.out.print("row: " + i + " ");
+            System.out.print(i + " ");
             for(int j = 0; j < columns; j++) {
                 System.out.print(board[j][i]);
             }
