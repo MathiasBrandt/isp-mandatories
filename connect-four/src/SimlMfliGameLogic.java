@@ -2,6 +2,7 @@ import com.sun.tools.javac.util.Pair;
 
 import java.io.Console;
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Created by brandt on 02/03/15.
@@ -30,14 +31,23 @@ public class SimlMfliGameLogic implements IGameLogic {
 
     @Override
     public int decideNextMove() {
-        long start = System.nanoTime();
-        int bestColumn = miniMaxer.minimaxDecision(gameState.copyState());
+        while(true) {
+             Random random = new Random();
+             int column = random.nextInt(gameState.getColumnCount());
 
-        System.out.println("MiniMax chose: " + bestColumn);
-        long finish = System.nanoTime();
-        long elapsedTime = finish - start;
-        System.out.println("Time taken: " + (double)(elapsedTime)/ 1000000000.0);
-        return bestColumn;
+             if (!gameState.isColumnFull(column)) {
+                 return column;
+             }
+        }
+//
+//        long start = System.nanoTime();
+//        int bestColumn = miniMaxer.minimaxDecision(gameState.copyState());
+//
+//        System.out.println("MiniMax chose: " + bestColumn);
+//        long finish = System.nanoTime();
+//        long elapsedTime = finish - start;
+//        System.out.println("Time taken: " + (double)(elapsedTime)/ 1000000000.0);
+//        return bestColumn;
     }
 
     @Override
