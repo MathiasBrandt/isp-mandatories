@@ -12,7 +12,7 @@ public class GameState {
     private int columns;
     private int rows;
     private Pair<Integer, Integer> lastCoinPosition;
-    private int lastPlayer;
+    //private int lastPlayer;
 
     public GameState(int columns, int rows) {
         this.columns = columns;
@@ -21,13 +21,14 @@ public class GameState {
         board = new int[columns][rows];
     }
 
-    public GameState(int columns, int rows, int[][] board, Pair<Integer, Integer> lastCoinPosition, int lastPlayer) {
+    //public GameState(int columns, int rows, int[][] board, Pair<Integer, Integer> lastCoinPosition, int lastPlayer) {
+    public GameState(int columns, int rows, int[][] board, Pair<Integer, Integer> lastCoinPosition) {
         this.columns = columns;
         this.rows = rows;
 
         this.board = board;
         this.lastCoinPosition = lastCoinPosition;
-        this.lastPlayer = lastPlayer;
+        //this.lastPlayer = lastPlayer;
     }
 
     public Pair<Integer, Integer> getLastCoinPosition() {
@@ -49,11 +50,10 @@ public class GameState {
     public void insertCoin(int column, int playerId) {
         // insert a token in the next available row for the specified column.
         int row = getNextAvailableRow(column);
-        //System.out.println("Placing coin in col: " + column + " row: " + row);
 
         board[column][row] = playerId;
 
-        lastPlayer = playerId;
+        //lastPlayer = playerId;
 
         // save last coin placement
         lastCoinPosition = new Pair(column, row);
@@ -115,7 +115,8 @@ public class GameState {
             newState[i] = Arrays.copyOf(board[i], board[i].length);
         }
 
-        return new GameState(columns, rows, newState, lastCoinPosition, lastPlayer);
+        //return new GameState(columns, rows, newState, lastCoinPosition, lastPlayer);
+        return new GameState(columns, rows, newState, lastCoinPosition);
     }
 
     public void printState() {
