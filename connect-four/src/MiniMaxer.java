@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 /**
  * Created by brandt on 10/03/15.
  */
@@ -18,13 +16,16 @@ public class MiniMaxer {
     public int minimaxDecision(GameState state) {
         System.out.println("Making decision for player " + aiPlayerId);
 
+        double alpha = Double.NEGATIVE_INFINITY;
+        double beta = Double.POSITIVE_INFINITY;
+
         double[] values = new double[state.getColumnCount()];
         int action = -1;
 
         if(aiPlayerId == PLAYER_MIN) {
             for(int i = 0; i < state.getColumnCount(); i++) {
                 if(!state.isColumnFull(i)) {
-                    values[i] = maxValue(state.copyState());
+                    values[i] = maxValue(state.copyState(), alpha, beta);
                 } else {
                     values[i] = Double.NaN;
                 }
@@ -42,7 +43,7 @@ public class MiniMaxer {
         } else {
             for(int i = 0; i < state.getColumnCount(); i++) {
                 if(!state.isColumnFull(i)) {
-                    values[i] = minValue(state.copyState());
+                    values[i] = minValue(state.copyState(), alpha, beta);
                 } else {
                     values[i] = Double.NaN;
                 }
@@ -61,7 +62,7 @@ public class MiniMaxer {
         return action;
     }
 
-    private double minValue(GameState state) {
+    private double minValue(GameState state, double alpha, double beta) {
         double utility = getUtility(state);
         if(utility > 0) {
             return utility;
@@ -71,24 +72,40 @@ public class MiniMaxer {
         for (int i = 0; i < state.getColumnCount(); i++) {
             if (!state.isColumnFull(i)) {
                 state.insertCoin(i, PLAYER_MIN);
-                value = Double.min(value, maxValue(state.copyState()));
+                value = Double.min(value, maxValue(state.copyState(), alpha, beta));
+
+                beta = Double.min(this.beta, value);
+
+                if(value <= alpha){
+                    System.out.println("Pruning");
+                    return value;
+                }
             }
         }
 
         return value;
     }
 
-    private double maxValue(GameState state) {
+    private double maxValue(GameState state, double alpha, double beta) {
         double utility = getUtility(state);
         if(utility > 0) {
             return utility;
         }
 
-        double value = Double.MIN_VALUE;
+        double value = Double.MIN_VALUE; // TODO: Change to negative infinity.
         for(int i = 0; i < state.getColumnCount(); i++) {
             if(!state.isColumnFull(i)) {
                 state.insertCoin(i, PLAYER_MAX);
-                value = Double.max(value, minValue(state.copyState()));
+                value = Double.max(value, minValue(state.copyState(), alpha, beta));
+                System.out.println(value + " " + beta);
+
+                alpha = Double.max(this.alpha, value); // TODO: overall alpha or the one supplied?
+
+                if(value >= beta){
+                    System.out.println("Pruning");
+                    return value;
+                }
+
             }
         }
 
