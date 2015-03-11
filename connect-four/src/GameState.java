@@ -77,9 +77,15 @@ public class GameState {
         int row = lastCoinPosition.snd;
         int playerID = board[column][row];
 
+        int horizontalCount = checkHorizontal(playerID, column, row);
+        int verticalCount = checkVertical(playerID, column, row);
+        int diagonalOneCount = checkDiagonalOne(playerID, column, row);
+        int diagonalTwoCount = checkDiagonalTwo(playerID, column, row);
 
-
-        Boolean gameOver = checkHorizontal(playerID, column, row) || checkVertical(playerID, column, row) || checkDiagonalOne(playerID, column, row) == WIN_CONDITION|| checkDiagonalTwo(playerID, column, row) == WIN_CONDITION;
+        boolean gameOver = horizontalCount >= WIN_CONDITION ||
+                           verticalCount >= WIN_CONDITION ||
+                           diagonalOneCount >= WIN_CONDITION ||
+                           diagonalTwoCount >= WIN_CONDITION;
 
         if(gameOver) {
             return playerID == 1 ? IGameLogic.Winner.PLAYER1 : IGameLogic.Winner.PLAYER2;
@@ -123,84 +129,80 @@ public class GameState {
         }
     }
 
-    public Boolean checkHorizontal(int playerID, int initialColumn, int initialRow) {
-        //System.out.println("---");
+    /**
+     * Counts the consecutive amount of coins of the player who last placed a coin in the row of which
+     * that coin was placed.
+     * @param playerID
+     * @param initialColumn
+     * @param initialRow
+     * @return
+     */
+    public int checkHorizontal(int playerID, int initialColumn, int initialRow) {
         // count is initially 1 because we placed a coin
         int count = 1;
-        // always check to the right first
         int offset = 1;
+        boolean checkLeft = true;
+        boolean checkRight = true;
 
-        while(count < WIN_CONDITION) {
-            //System.out.println("offset is " + offset);
-
+        while(checkLeft || checkRight) {
             // bound checks
             if(initialColumn + offset >= columns) {
-                //System.out.println("right bound exceeded");
                 // right bound exceeded
-                // check to the left of initial position
-                offset = -1;
-                continue;
+                checkRight = false;
 
-            } else if(initialColumn + offset < 0) {
-                //System.out.println("left bound exceeded");
-                // left bound exceeded, return false since we have already checked to the right
-                return false;
+            }
+            if(initialColumn - offset < 0) {
+                // left bound exceeded
+                checkLeft = false;
             }
 
-            if(board[initialColumn + offset][initialRow] == playerID) {
-                // we found one more coin in succession of the previous or initial coin
-                count++;
-                //System.out.println("Updating count to " + count);
-
-                // if offset is positive it means we are currently checking to the right so increase it.
-                // else, we are checking to the left so decrease it.
-                offset += offset > 0 ? 1 : -1;
-            } else {
-                if(offset > 0) {
-                    //System.out.println("right check done");
-                    // right check is done, now check left
-                    offset = -1;
+            if(checkLeft) {
+                if(board[initialColumn - offset][initialRow] == playerID) {
+                    // we found one more coin in succession of the previous coin
+                    count++;
                 } else {
-                    //System.out.println("left check done");
-                    // left check is done, already checked right, return false
-                    return false;
+                    checkLeft = false;
                 }
             }
-        }
 
-        return true;
-    }
-
-    public Boolean checkVertical(int playerID, int initialColumn, int initialRow) {
-        //System.out.println("---");
-
-        // start counting from initialRow + 1, since we placed a coin in initialRow.
-        // Also, that's why count starts at 1 instead of 0. We don't need to check initialRow.
-        int count = 1;
-        int offset = initialRow + 1;
-
-        while(count < WIN_CONDITION) {
-            //System.out.println("currentRow is " + offset);
-
-            if(offset >= rows) {
-                // lower bound exceeded
-                //System.out.println("lower bound exceeded");
-                return false;
-            }
-
-            if(board[initialColumn][offset] == playerID) {
-                // we found a coin in succession of the previous or initial coin.
-                count++;
-                //System.out.println("updating count to " + count);
-            } else {
-                // the coin does not match
-                return false;
+            if(checkRight) {
+                if(board[initialColumn + offset][initialRow] == playerID) {
+                    count++;
+                } else {
+                    checkRight = false;
+                }
             }
 
             offset++;
         }
 
-        return true;
+        return count;
+    }
+
+    public int checkVertical(int playerID, int initialColumn, int initialRow) {
+        // start counting from initialRow + 1, since we placed a coin in initialRow.
+        // Also, that's why count starts at 1 instead of 0. We don't need to check initialRow.
+        int count = 1;
+        int offset = 1;
+        boolean checkDown = true;
+
+        while(checkDown) {
+            if(initialRow + offset >= rows) {
+                // lower bound exceeded
+                return count;
+            }
+
+            if(board[initialColumn][initialRow + offset] == playerID) {
+                // we found a coin in succession of the previous or initial coin.
+                count++;
+            } else {
+                checkDown = false;
+            }
+
+            offset++;
+        }
+
+        return count;
     }
 
     /**
