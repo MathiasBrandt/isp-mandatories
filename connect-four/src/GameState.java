@@ -77,7 +77,9 @@ public class GameState {
         int row = lastCoinPosition.snd;
         int playerID = board[column][row];
 
-        Boolean gameOver = checkHorizontal(playerID, column, row) || checkVertical(playerID, column, row) || checkDiagonalOne(playerID, column, row) || checkDiagonalTwo(playerID, column, row);
+
+
+        Boolean gameOver = checkHorizontal(playerID, column, row) || checkVertical(playerID, column, row) || checkDiagonalOne(playerID, column, row) == WIN_CONDITION|| checkDiagonalTwo(playerID, column, row) == WIN_CONDITION;
 
         if(gameOver) {
             return playerID == 1 ? IGameLogic.Winner.PLAYER1 : IGameLogic.Winner.PLAYER2;
@@ -202,29 +204,22 @@ public class GameState {
     }
 
     /**
-     * Checks if the player has connected four on the diagonal going downwards from left to right.
+     * Counts the consecutive amount of coins of the player who last placed a coin downwards from left to right.
      * @param playerID
      * @param initialColumn
      * @param initialRow
      * @return
      */
-    public Boolean checkDiagonalOne(int playerID, int initialColumn, int initialRow) {
+    public int checkDiagonalOne(int playerID, int initialColumn, int initialRow) {
         int count = 1;
         int offset = 1;
         boolean checkLeft = true;
         boolean checkRight = true;
 
         // Check
-        while(count < WIN_CONDITION) {
-            //System.out.println(count);
-            // If we are done checking left and right, stop.
-            if(!checkLeft && !checkRight){
-                return false;
-            }
-
-            //
+        while(checkLeft || checkRight) {
+            // check if out of bounds on the left hand side.
             if(initialRow - offset < 0 || initialColumn - offset < 0){
-                // out of bounds on the left hand side.
                 //System.out.println("Not checking left anymore");
                 //System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
                 checkLeft = false;
@@ -257,33 +252,27 @@ public class GameState {
             offset++;
         }
 
-        if(count == WIN_CONDITION){
-            return true;
-        }
-        return false;
+
+        return count;
     }
 
     /**
-     * Checks if the player has connected four on the diagonal going upwards from left to right.
+     * Counts the consecutive amount of coins of the player who last placed a coin upwards from left to right.
      * @param playerID
      * @param initialColumn
      * @param initialRow
      * @return
      */
-    public Boolean checkDiagonalTwo(int playerID, int initialColumn, int initialRow) {
+    public int checkDiagonalTwo(int playerID, int initialColumn, int initialRow) {
         int count = 1;
         int offset = 1;
         boolean checkLeft = true;
         boolean checkRight = true;
 
         // Check
-        while(count < WIN_CONDITION) {
-            if(!checkLeft && !checkRight){
-                return false;
-            }
-
+        while(checkLeft || checkRight) {
+            // check if out of bounds on the left hand side.
             if(initialRow + offset >= rows || initialColumn - offset < 0){
-                // out of bounds on the left hand side.
                 //System.out.println("Not checking left anymore");
                 //System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
                 checkLeft = false;
@@ -314,12 +303,8 @@ public class GameState {
                 }
             }
             offset++;
-            //System.out.println(count);
         }
 
-        if(count == WIN_CONDITION){
-            return true;
-        }
-        return false;
+        return count;
     }
 }

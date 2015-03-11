@@ -173,10 +173,68 @@ public class MiniMaxer {
      * @return
      */
     public int maxCoinsInARow(GameState state){
+        int initialColumn = state.getLastCoinPosition().fst;
+        int initialRow = state.getLastCoinPosition().snd;
+        int playerID = state.getBoard()[initialColumn][initialRow];
 
+        int count = state.checkDiagonalOne(playerID, initialColumn, initialRow) + state.checkDiagonalTwo(playerID, initialColumn, initialRow);
 
+        if(playerID == this.PLAYER_MIN){
+            return count *= -1;
+        }
 
         return 0;
+
+
+//
+//        int count = 0;
+//        boolean checkHorizontally = true;
+//        boolean checkDiagonallyUp = true;
+//        boolean checkDiagonallyDown = true;
+//
+//        // check right and up
+//        for(int i = column; i < state.getColumnCount() - 1; i++){
+//            // No longer looking at a consecutive coin, so stop counting.
+//            if(state.getBoard()[i][row] != playerID){
+//                break;
+//            } else {
+//                count++;
+//            }
+//        }
+//
+//
+//        checkHorizontally = true;
+//        checkDiagonallyUp = true;
+//        checkDiagonallyDown = true;
+//
+//        // Check left and diagonally down
+//        for (int i = column; i >= 0; i--){
+//            // left
+//            if(state.getBoard()[i][row] != playerID){
+//                checkHorizontally = false;
+//            } else if(checkHorizontally) {
+//                count++;
+//            }
+//            // left and up
+//            if(state.getBoard()[i][row + i] != playerID){
+//                checkHorizontally = false;
+//            } else if(checkHorizontally) {
+//                count++;
+//            }
+//            // left and down
+//            if(state.getBoard()[i][row - i] != playerID){
+//                checkHorizontally = false;
+//            } else if(checkHorizontally) {
+//                count++;
+//            }
+//        }
+
+        // If player is Min, negate the result
+//        if(playerID == this.PLAYER_MIN){
+//            return count *= -1;
+//        }
+//
+//        return 0;
     }
 
     /**
