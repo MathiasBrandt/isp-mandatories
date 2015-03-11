@@ -30,10 +30,13 @@ public class SimlMfliGameLogic implements IGameLogic {
 
     @Override
     public int decideNextMove() {
+        long start = System.nanoTime();
         int bestColumn = miniMaxer.minimaxDecision(gameState.copyState());
 
         System.out.println("MiniMax chose: " + bestColumn);
-
+        long finish = System.nanoTime();
+        long elapsedTime = finish - start;
+        System.out.println("Time taken: " + (double)(elapsedTime)/ 1000000000.0);
         return bestColumn;
     }
 
