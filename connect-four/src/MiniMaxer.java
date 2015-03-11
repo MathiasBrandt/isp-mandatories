@@ -46,7 +46,7 @@ public class MiniMaxer {
             }
 
             // initialize with dummy value
-            double minValue = Double.MAX_VALUE;
+            double minValue = Double.POSITIVE_INFINITY;
 
             // go through all of the calculated minimax values to pick the best corresponding action
             for(int i = 0; i < minimaxValues.length; i++) {
@@ -69,7 +69,7 @@ public class MiniMaxer {
                 }
             }
 
-            double maxValue = Double.MIN_VALUE;
+            double maxValue = Double.NEGATIVE_INFINITY;
             for(int i = 0; i < minimaxValues.length; i++) {
                 System.out.println(minimaxValues[i]);
 
@@ -99,7 +99,7 @@ public class MiniMaxer {
         }
 
         // initialize with dummy value
-        double value = Double.MAX_VALUE;
+        double value = Double.POSITIVE_INFINITY;
 
         // try to perform each possible action and keep track of the best one
         for (int i = 0; i < state.getColumnCount(); i++) {
