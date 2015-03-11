@@ -6,7 +6,7 @@ import java.util.Arrays;
  * Created by brandt on 10/03/15.
  */
 public class GameState {
-    public final int WIN_CONDITION = 4;
+    public static final int WIN_CONDITION = 4;
 
     private int[][] board;
     private int columns;
