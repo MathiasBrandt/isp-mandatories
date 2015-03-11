@@ -195,9 +195,16 @@ public class MiniMaxer {
      * @return amount of win combinations that the lastCoinPosition is a part of.
      */
     public int winCombinationsCount(GameState state){
+        int initialColumn = state.getLastCoinPosition().fst;
+        int initialRow = state.getLastCoinPosition().snd;
+        int playerID = state.getBoard()[initialColumn][initialRow];
 
+        int count = state.checkHorizontal(playerID, initialColumn, initialRow, true);
+        count = count - GameState.WIN_CONDITION + 1;
 
-        return 0;
+        System.out.println("possible wins: " + count);
+
+        return count;
     }
 
     /**
