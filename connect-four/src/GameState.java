@@ -30,6 +30,14 @@ public class GameState {
         this.lastPlayer = lastPlayer;
     }
 
+    public Pair<Integer, Integer> getLastCoinPosition() {
+        return lastCoinPosition;
+    }
+
+    public int[][] getBoard() {
+        return board;
+    }
+
     public int getColumnCount() {
         return columns;
     }
