@@ -41,9 +41,12 @@ public class GameState {
     public void insertCoin(int column, int playerId) {
         // insert a token in the next available row for the specified column.
         int row = getNextAvailableRow(column);
+        System.out.println("Placing coin in col: " + column + " row: " + row);
+
         board[column][row] = playerId;
 
         lastPlayer = playerId;
+
         // save last coin placement
         lastCoinPosition = new Pair(column, row);
     }
@@ -89,9 +92,9 @@ public class GameState {
         return getNextAvailableRow(column) < 0;
     }
 
-    public int getNextPlayer() {
+    /*public int getNextPlayer() {
         return lastPlayer;
-    }
+    }*/
 
     public GameState copyState() {
         int[][] newState = new int[columns][rows];
@@ -101,6 +104,17 @@ public class GameState {
         }
 
         return new GameState(columns, rows, newState, lastCoinPosition, lastPlayer);
+    }
+
+    public void printState() {
+        for(int i = 0; i < rows; i++) {
+            System.out.print("row: " + i + " ");
+            for(int j = 0; j < columns; j++) {
+                System.out.print(board[j][i]);
+            }
+
+            System.out.println();
+        }
     }
 
     public Boolean checkHorizontal(int playerID, int initialColumn, int initialRow) {

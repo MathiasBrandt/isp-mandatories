@@ -9,15 +9,19 @@ public class MiniMaxer {
     public final double UTILITY_TIE = 1.5;
     public final int PLAYER_MIN = 1;
     public final int PLAYER_MAX = 2;
+    public int aiPlayerId;
 
+    public MiniMaxer(int playerId) {
+        aiPlayerId = playerId;
+    }
 
     public int minimaxDecision(GameState state) {
-        int player = state.getNextPlayer();
-        System.out.println("Player: " + player);
+        System.out.println("Making decision for player " + aiPlayerId);
+
         double[] values = new double[state.getColumnCount()];
         int action = -1;
 
-        if(player == PLAYER_MIN) {
+        if(aiPlayerId == PLAYER_MIN) {
             for(int i = 0; i < state.getColumnCount(); i++) {
                 if(!state.isColumnFull(i)) {
                     values[i] = maxValue(state.copyState());
