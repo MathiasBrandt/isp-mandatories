@@ -31,23 +31,23 @@ public class SimlMfliGameLogic implements IGameLogic {
 
     @Override
     public int decideNextMove() {
-        while(true) {
-             Random random = new Random();
-             int column = random.nextInt(gameState.getColumnCount());
+//        while(true) {
+//             Random random = new Random();
+//             int column = random.nextInt(gameState.getColumnCount());
+//
+//             if (!gameState.isColumnFull(column)) {
+//                 return column;
+//             }
+//        }
+//
+        long start = System.nanoTime();
+        int bestColumn = miniMaxer.minimaxDecision(gameState.copyState());
 
-             if (!gameState.isColumnFull(column)) {
-                 return column;
-             }
-        }
-//
-//        long start = System.nanoTime();
-//        int bestColumn = miniMaxer.minimaxDecision(gameState.copyState());
-//
-//        System.out.println("MiniMax chose: " + bestColumn);
-//        long finish = System.nanoTime();
-//        long elapsedTime = finish - start;
-//        System.out.println("Time taken: " + (double)(elapsedTime)/ 1000000000.0);
-//        return bestColumn;
+        System.out.println("MiniMax chose: " + bestColumn);
+        long finish = System.nanoTime();
+        long elapsedTime = finish - start;
+        System.out.println("Time taken: " + (double)(elapsedTime)/ 1000000000.0);
+        return bestColumn;
     }
 
     @Override

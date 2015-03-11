@@ -4,13 +4,13 @@ import java.util.Collections;
  * Created by brandt on 10/03/15.
  */
 public class MiniMaxer {
-    public final double UTILITY_MIN = 1.0;
-    public final double UTILITY_MAX = 2.0;
-    public final double UTILITY_TIE = 1.5;
+    public final double UTILITY_MIN = -100;
+    public final double UTILITY_MAX = 100;
+    public final double UTILITY_TIE = 0;
     public final int PLAYER_MIN = 1;
     public final int PLAYER_MAX = 2;
     public int aiPlayerId;
-    public final int CUTOFF = 10;
+    public final int CUTOFF = 100;
 
     public MiniMaxer(int playerId) {
         aiPlayerId = playerId;
@@ -51,7 +51,7 @@ public class MiniMaxer {
 
             // go through all of the calculated minimax values to pick the best corresponding action
             for(int i = 0; i < minimaxValues.length; i++) {
-                //System.out.println(minimaxValues[i]);
+                System.out.println(minimaxValues[i]);
                 if(minimaxValues[i] < minValue) {
                     bestAction = i;
                     minValue = minimaxValues[i];
@@ -182,10 +182,8 @@ public class MiniMaxer {
         count = Integer.max(count, state.checkVertical(playerID, initialColumn, initialRow));
 
         if(playerID == this.PLAYER_MIN){
-            System.out.println("Count = " + count * -1);
             return count *= -1;
         } else {
-            System.out.println("Count = " + count);
             return count;
         }
     }
@@ -213,12 +211,14 @@ public class MiniMaxer {
             return 0;
         }
 
-        int[][] evaluationTable = {{3, 4, 5, 7, 5, 4, 3},
+        int[][] evaluationTable = {
+                {3, 4, 5, 7, 5, 4, 3},
                 {4, 6, 8, 10, 8, 6, 4},
                 {5, 8, 11, 13, 11, 8, 5},
                 {5, 8, 11, 13, 11, 8, 5},
                 {4, 6, 8, 10, 8, 6, 4},
-                {3, 4, 5, 7, 5, 4, 3}};
+                {3, 4, 5, 7, 5, 4, 3}
+        };
 
         int initialColumn = state.getLastCoinPosition().fst;
         int initialRow = state.getLastCoinPosition().snd;
@@ -226,11 +226,12 @@ public class MiniMaxer {
 
         int result = 0;
 
+        // Switch column/row because the eval table is switched around.
         if(playerID == PLAYER_MIN){
-            result = -evaluationTable[initialColumn][initialRow];
+            result = -evaluationTable[initialRow][initialColumn];
             return result;
         } else {
-            result = evaluationTable[initialColumn][initialRow];
+            result = evaluationTable[initialRow][initialColumn];
             return result;
         }
     }
@@ -243,12 +244,6 @@ public class MiniMaxer {
      */
     private double eval(GameState state){
         //
-        int score = 0;
-
-        score += maxCoinsInARow(state);
-        score += winCombinationsCount(state);
-        score += coinPositionValue(state);
-
         switch(state.gameFinished()) {
             case PLAYER1:
                 return UTILITY_MIN;
@@ -258,6 +253,15 @@ public class MiniMaxer {
                 return UTILITY_TIE;
         }
 
-        return -1;
+        int score = 0;
+
+        score += maxCoinsInARow(state);
+        score += winCombinationsCount(state);
+        score += coinPositionValue(state);
+
+        System.out.println("The score is: " + score);
+
+
+        return score;
     }
 }
