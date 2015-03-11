@@ -74,7 +74,7 @@ public class MiniMaxer {
                 state.insertCoin(i, PLAYER_MIN);
                 value = Double.min(value, maxValue(state.copyState(), alpha, beta));
 
-                beta = Double.min(this.beta, value);
+                beta = Double.min(beta, value);
 
                 if(value <= alpha){
                     System.out.println("Pruning");
@@ -92,14 +92,14 @@ public class MiniMaxer {
             return utility;
         }
 
-        double value = Double.MIN_VALUE; // TODO: Change to negative infinity.
+        double value = Double.NEGATIVE_INFINITY;
         for(int i = 0; i < state.getColumnCount(); i++) {
             if(!state.isColumnFull(i)) {
                 state.insertCoin(i, PLAYER_MAX);
                 value = Double.max(value, minValue(state.copyState(), alpha, beta));
                 System.out.println(value + " " + beta);
 
-                alpha = Double.max(this.alpha, value); // TODO: overall alpha or the one supplied?
+                alpha = Double.max(alpha, value); // TODO: overall alpha or the one supplied?
 
                 if(value >= beta){
                     System.out.println("Pruning");
