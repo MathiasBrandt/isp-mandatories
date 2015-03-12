@@ -94,7 +94,9 @@ public class MiniMaxer {
      */
     private double minValue(GameState state, double alpha, double beta, int depth) {
         if(cutoffTest(state, depth)){
-            return eval(state);
+            double value = eval(state);
+            System.out.println("Eval: " + value);
+            return value;
         }
         depth++;
 
@@ -210,7 +212,7 @@ public class MiniMaxer {
         int count = state.checkHorizontal(playerID, initialColumn, initialRow, true);
         count = count - GameState.WIN_CONDITION + 1;
 
-        System.out.println("possible wins: " + count);
+//        System.out.println("possible wins: " + count);
 
         return count;
     }
@@ -262,10 +264,13 @@ public class MiniMaxer {
         //
         switch(state.gameFinished()) {
             case PLAYER1:
+                System.out.println("player1");
                 return UTILITY_MIN;
             case PLAYER2:
+                System.out.println("player2");
                 return UTILITY_MAX;
             case TIE:
+                System.out.println("tie");
                 return UTILITY_TIE;
         }
 
