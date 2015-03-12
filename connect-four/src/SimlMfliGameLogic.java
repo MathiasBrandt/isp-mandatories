@@ -5,7 +5,10 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * Created by brandt on 02/03/15.
+ * Intelligent Systems Programming
+ *      Connect Four
+ * @Author Mathias Flink Brandt.(mfli@itu.dk)
+ * @Author Simon Langhoff (siml@itu.dk)
  */
 public class SimlMfliGameLogic implements IGameLogic {
     private GameState gameState;

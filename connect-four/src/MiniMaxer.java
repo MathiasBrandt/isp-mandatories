@@ -1,5 +1,8 @@
 /**
- * Created by brandt on 10/03/15.
+ *  Intelligent Systems Programming
+ *      Connect Four
+ * @Author Mathias Flink Brandt.(mfli@itu.dk)
+ * @Author Simon Langhoff (siml@itu.dk)
  */
 public class MiniMaxer {
     public final double UTILITY_MIN = -100;
@@ -13,7 +16,7 @@ public class MiniMaxer {
     public final int CUTOFF = 8;
 
     /**
-     *
+     * Our implementation of the Minimax Algorithm with pruning, cutoff and evaluation features.
      * @param playerId
      */
     public MiniMaxer(int playerId) {
@@ -45,7 +48,6 @@ public class MiniMaxer {
                 GameState copyState = state.copyState();
                 copyState.insertCoin(i, aiPlayerId);
                 double value = minValue(copyState, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
-                // TODO: IF stuff does not work, try calling max.  Maybe depending on player ID
                 System.out.println("### Column " + i + " " + value);
                 if(value > bestValue){
                     // This must be the currently best option. So store it's value and store the best column.
@@ -109,7 +111,7 @@ public class MiniMaxer {
      * @return the highest utility value
      */
     private double maxValue(GameState state, double alpha, double beta, int depth) {
-        // NOTE: comments have been omitted since they are more or less the same as in the minValue method
+        // NOTE: some comments have been omitted since they are more or less the same as in the minValue method
         double finished = isGameFinished(state);
         if(!Double.isNaN(finished)){
             // The game is over, so return terminal value.
@@ -124,6 +126,7 @@ public class MiniMaxer {
         double result = Double.NEGATIVE_INFINITY;
         for(int i = 0; i < state.getColumnCount(); i++) {
             if(!state.isColumnFull(i)) {
+                // Copy the state first, then insert coin for the AI player.
                 GameState copyState = state.copyState();
                 copyState.insertCoin(i, aiPlayerId);
                 result = Double.max(result, minValue(copyState, alpha, beta, depth));
@@ -187,6 +190,7 @@ public class MiniMaxer {
         opponentCount = Integer.max(opponentCount, state.checkHorizontal(playerID, initialColumn, initialRow, false));
         opponentCount = Integer.max(opponentCount, state.checkVertical(playerID, initialColumn, initialRow, false));
 
+        // We return the highest number, because if the opponent has a good position, we are interested in disrupting his position.
         return Integer.max(opponentCount, count);
     }
 
