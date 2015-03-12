@@ -178,9 +178,9 @@ public class MiniMaxer {
         int initialRow = state.getLastCoinPosition().snd;
         int playerID = state.getBoard()[initialColumn][initialRow];
 
-        int count = Integer.max(state.checkDiagonalOne(playerID, initialColumn, initialRow), state.checkDiagonalTwo(playerID, initialColumn, initialRow));
+        int count = Integer.max(state.checkDiagonalOne(playerID, initialColumn, initialRow, false), state.checkDiagonalTwo(playerID, initialColumn, initialRow, false));
         count = Integer.max(count, state.checkHorizontal(playerID, initialColumn, initialRow, false));
-        count = Integer.max(count, state.checkVertical(playerID, initialColumn, initialRow));
+        count = Integer.max(count, state.checkVertical(playerID, initialColumn, initialRow, false));
 
         if(count >= state.WIN_CONDITION){
             if(playerID == this.PLAYER_MIN){

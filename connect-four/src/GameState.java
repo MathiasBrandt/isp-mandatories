@@ -78,9 +78,9 @@ public class GameState {
         int playerID = board[column][row];
 
         int horizontalCount = checkHorizontal(playerID, column, row, false);
-        int verticalCount = checkVertical(playerID, column, row);
-        int diagonalOneCount = checkDiagonalOne(playerID, column, row);
-        int diagonalTwoCount = checkDiagonalTwo(playerID, column, row);
+        int verticalCount = checkVertical(playerID, column, row, false);
+        int diagonalOneCount = checkDiagonalOne(playerID, column, row, false);
+        int diagonalTwoCount = checkDiagonalTwo(playerID, column, row, false);
 
         boolean gameOver = horizontalCount >= WIN_CONDITION ||
                            verticalCount >= WIN_CONDITION ||
@@ -185,24 +185,42 @@ public class GameState {
         return count;
     }
 
-    public int checkVertical(int playerID, int initialColumn, int initialRow) {
+    public int checkVertical(int playerID, int initialColumn, int initialRow, boolean includeBlanks) {
         // start counting from initialRow + 1, since we placed a coin in initialRow.
         // Also, that's why count starts at 1 instead of 0. We don't need to check initialRow.
         int count = 1;
         int offset = 1;
         boolean checkDown = true;
+        boolean checkUp = includeBlanks;
 
-        while(checkDown) {
+        while(checkDown || checkUp) {
             if(initialRow + offset >= rows) {
                 // lower bound exceeded
-                return count;
+                checkDown = false;
             }
 
-            if(board[initialColumn][initialRow + offset] == playerID) {
-                // we found a coin in succession of the previous or initial coin.
-                count++;
-            } else {
-                checkDown = false;
+            if(initialRow - offset < 0) {
+                // upper bound exceeded
+                checkUp = false;
+            }
+
+            if(checkDown) {
+                // no need to check for == blank, since there are always coins below
+                if (board[initialColumn][initialRow + offset] == playerID) {
+                    // we found a coin in succession of the previous coin.
+                    count++;
+                } else {
+                    checkDown = false;
+                }
+            }
+
+            if(checkUp) {
+                // no need to check for == playerID, since there are never coins above
+                if(board[initialColumn][initialRow - offset] == MiniMaxer.PLAYER_BLANK) {
+                    count++;
+                } else {
+                    checkDown = false;
+                }
             }
 
             offset++;
@@ -218,7 +236,7 @@ public class GameState {
      * @param initialRow
      * @return
      */
-    public int checkDiagonalOne(int playerID, int initialColumn, int initialRow) {
+    public int checkDiagonalOne(int playerID, int initialColumn, int initialRow, boolean includeBlanks) {
         int count = 1;
         int offset = 1;
         boolean checkLeft = true;
@@ -242,6 +260,8 @@ public class GameState {
             if(checkLeft){
                 if (board[initialColumn - offset][initialRow - offset] == playerID) {
                     count++;
+                } else if(includeBlanks && board[initialColumn - offset][initialRow - offset] == MiniMaxer.PLAYER_BLANK) {
+                    count++;
                 } else {
                     //System.out.println("Not checking left anymore");
                     //System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
@@ -250,6 +270,8 @@ public class GameState {
             }
             if (checkRight){
                 if (board[initialColumn + offset][initialRow + offset] == playerID) {
+                    count++;
+                } else if(includeBlanks && board[initialColumn + offset][initialRow + offset] == MiniMaxer.PLAYER_BLANK) {
                     count++;
                 } else {
                     //System.out.println("Not checking right anymore");
@@ -271,7 +293,7 @@ public class GameState {
      * @param initialRow
      * @return
      */
-    public int checkDiagonalTwo(int playerID, int initialColumn, int initialRow) {
+    public int checkDiagonalTwo(int playerID, int initialColumn, int initialRow, boolean includeBlanks) {
         int count = 1;
         int offset = 1;
         boolean checkLeft = true;
@@ -292,8 +314,10 @@ public class GameState {
                 //System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
             }
 
-            if(checkLeft){
+            if(checkLeft) {
                 if (board[initialColumn - offset][initialRow + offset] == playerID) {
+                    count++;
+                } else if(includeBlanks && board[initialColumn - offset][initialRow + offset] == MiniMaxer.PLAYER_BLANK) {
                     count++;
                 } else {
                     //System.out.println("Not checking left anymore");
@@ -303,6 +327,8 @@ public class GameState {
             }
             if (checkRight){
                 if (board[initialColumn + offset][initialRow - offset] == playerID) {
+                    count++;
+                } else if(includeBlanks && board[initialColumn + offset][initialRow - offset] == MiniMaxer.PLAYER_BLANK) {
                     count++;
                 } else {
                     //System.out.println("Not checking right anymore");
