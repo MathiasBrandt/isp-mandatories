@@ -10,7 +10,7 @@ public class MiniMaxer {
     public final int PLAYER_MAX = 2;
     public int aiPlayerId;
     public int otherPlayerId;
-    public final int CUTOFF = 7;
+    public final int CUTOFF = 5;
 
     public MiniMaxer(int playerId) {
         aiPlayerId = playerId;
@@ -42,6 +42,7 @@ public class MiniMaxer {
                 copyState.insertCoin(i, aiPlayerId);
                 double value = minValue(copyState, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
                 // TODO: IF stuff does not work, try calling max.  Maybe depending on player ID
+                System.out.println("### Column " + i + " " + value);
                 if(value > bestValue){
                     // This must be the currently best option. So store it's value and store the best column.
                     bestValue = value;
@@ -175,8 +176,6 @@ public class MiniMaxer {
         count = Integer.max(count, state.checkHorizontal(playerID, initialColumn, initialRow, false));
         count = Integer.max(count, state.checkVertical(playerID, initialColumn, initialRow, false));
 
-        System.out.println("### Player ID = " + playerID);
-
         // Create score for adversary by switching id and counting score.
         playerID = playerID == aiPlayerId ? otherPlayerId : aiPlayerId;
 
@@ -250,38 +249,22 @@ public class MiniMaxer {
 
         int coinsInARow = maxCoinsInARow(state);
         if(coinsInARow >= GameState.WIN_CONDITION ){
-            System.out.println("### LOL");
             return UTILITY_MAX;
-//            if(aiPlayerId == playerID){
-//                return UTILITY_MAX;
-//            } else {
-//                return UTILITY_MIN;
-//            }
         } else {
             if(playerID == aiPlayerId){
                 score += coinsInARow * 3;
             }
-//            else {
-//                score -= coinsInARow;
-//            }
         }
 
-//        int positionValue = coinPositionValue(state);
-//        score += positionValue;
-//
-//
-//        int winCombinations = winCombinationsCount(state);
-//        if(winCombinations <= 0){
-//            if(playerID == aiPlayerId){
-//                return UTILITY_MAX;
-//            } else {
-//                return UTILITY_MIN;
-//            }
-//        } else {
-//            score += winCombinations;
-//        }
+        int positionValue = coinPositionValue(state);
+        score += positionValue;
 
-        System.out.println("The score is: " + score);
+
+        int winCombinations = winCombinationsCount(state);
+        // If the coin placed has any value in terms of winning combinations.
+        if(winCombinations > 0) {
+            score += winCombinations * 2;
+        }
         return score;
     }
 }
