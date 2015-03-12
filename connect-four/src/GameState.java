@@ -53,7 +53,9 @@ public class GameState {
 
         board[column][row] = playerId;
 
-        //lastPlayer = playerId;
+//        printState();
+//        System.out.println();
+
 
         // save last coin placement
         lastCoinPosition = new Pair(column, row);
@@ -89,10 +91,10 @@ public class GameState {
         int diagonalTwoCount = checkDiagonalTwo(playerID, column, row, false);
 
         //
-        System.out.println("Horizontal Count = " + horizontalCount);
-        System.out.println("Vertical Count = " + verticalCount);
-        System.out.println("DiagonalOne Count = " + diagonalOneCount);
-        System.out.println("DiagonalTwo Count = " + diagonalTwoCount);
+//        System.out.println("Horizontal Count = " + horizontalCount);
+//        System.out.println("Vertical Count = " + verticalCount);
+//        System.out.println("DiagonalOne Count = " + diagonalOneCount);
+//        System.out.println("DiagonalTwo Count = " + diagonalTwoCount);
 
         boolean gameOver = horizontalCount >= WIN_CONDITION ||
                            verticalCount >= WIN_CONDITION ||

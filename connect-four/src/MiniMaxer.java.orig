@@ -217,7 +217,11 @@ public class MiniMaxer {
         if(state.checkDiagonalOne(playerID, initialColumn, initialRow, true) >= GameState.WIN_CONDITION) { possibleWins++; }
         if(state.checkDiagonalTwo(playerID, initialColumn, initialRow, true) >= GameState.WIN_CONDITION) { possibleWins++; }
 
+<<<<<<< HEAD
         return possibleWins;
+=======
+        return count;
+>>>>>>> ceanup and remove prints.
     }
 
     /**

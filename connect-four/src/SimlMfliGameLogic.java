@@ -25,21 +25,12 @@ public class SimlMfliGameLogic implements IGameLogic {
     public void insertCoin(int column, int playerID) {
         gameState.insertCoin(column, playerID);
 
-        System.out.println("Player " + playerID + " inserted a coin");
-        gameState.printState();
+//        System.out.println("Player " + playerID + " inserted a coin");
+//        gameState.printState();
     }
 
     @Override
     public int decideNextMove() {
-//        while(true) {
-//             Random random = new Random();
-//             int column = random.nextInt(gameState.getColumnCount());
-//
-//             if (!gameState.isColumnFull(column)) {
-//                 return column;
-//             }
-//        }
-//
         long start = System.nanoTime();
         int bestColumn = miniMaxer.minimaxDecision(gameState.copyState());
 
