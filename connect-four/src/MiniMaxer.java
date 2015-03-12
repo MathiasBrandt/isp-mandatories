@@ -247,6 +247,9 @@ public class MiniMaxer {
 
         int score = 0;
 
+        int positionValue = coinPositionValue(state);
+        score += positionValue;
+
         int coinsInARow = maxCoinsInARow(state);
         if(coinsInARow >= GameState.WIN_CONDITION ){
             return UTILITY_MAX;
@@ -255,10 +258,6 @@ public class MiniMaxer {
                 score += coinsInARow * 3;
             }
         }
-
-        int positionValue = coinPositionValue(state);
-        score += positionValue;
-
 
         int winCombinations = winCombinationsCount(state);
         // If the coin placed has any value in terms of winning combinations.
