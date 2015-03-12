@@ -211,12 +211,13 @@ public class MiniMaxer {
         int initialRow = state.getLastCoinPosition().snd;
         int playerID = state.getBoard()[initialColumn][initialRow];
 
-        int count = state.checkHorizontal(playerID, initialColumn, initialRow, true);
-        count = count - GameState.WIN_CONDITION + 1;
+        int possibleWins = 0;
+        if(state.checkHorizontal(playerID, initialColumn, initialRow, true) >= GameState.WIN_CONDITION) { possibleWins++; }
+        if(state.checkVertical(playerID, initialColumn, initialRow, true) >= GameState.WIN_CONDITION) { possibleWins++; }
+        if(state.checkDiagonalOne(playerID, initialColumn, initialRow, true) >= GameState.WIN_CONDITION) { possibleWins++; }
+        if(state.checkDiagonalTwo(playerID, initialColumn, initialRow, true) >= GameState.WIN_CONDITION) { possibleWins++; }
 
-//        System.out.println("possible wins: " + count);
-
-        return count;
+        return possibleWins;
     }
 
     /**
