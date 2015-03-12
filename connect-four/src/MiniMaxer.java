@@ -173,7 +173,7 @@ public class MiniMaxer {
     }
 
     /**
-     * Counts the maximum amount of coins that are connected in a row based upon the lastCoinPosition.
+     * Counts the maximum amount of coins that are connected in a row based upon the lastCoinPosition. Counts for both the current player and the opponent and returns the highest number.
      * @param state
      * @return
      */
@@ -186,16 +186,21 @@ public class MiniMaxer {
         count = Integer.max(count, state.checkHorizontal(playerID, initialColumn, initialRow, false));
         count = Integer.max(count, state.checkVertical(playerID, initialColumn, initialRow, false));
 
-        if(count >= state.WIN_CONDITION){
-            if(playerID == this.PLAYER_MIN){
-                return (int)UTILITY_MIN;
-            } else {
-                return (int)UTILITY_MAX;
-            }
+        // Create score for adversary
+        if(playerID == PLAYER_MIN){
+            playerID = PLAYER_MAX;
+        } else if (playerID == PLAYER_MAX){
+            playerID = PLAYER_MIN;
+        } else {
+            System.out.println("Something went wrong");
         }
 
-        if(playerID == this.PLAYER_MIN){
-            return count *= -1;
+        int opponentCount = Integer.max(state.checkDiagonalOne(playerID, initialColumn, initialRow, false), state.checkDiagonalTwo(playerID, initialColumn, initialRow, false));
+        opponentCount = Integer.max(opponentCount, state.checkHorizontal(playerID, initialColumn, initialRow, false));
+        opponentCount = Integer.max(opponentCount, state.checkVertical(playerID, initialColumn, initialRow, false));
+
+        if(count > opponentCount){
+            return opponentCount;
         } else {
             return count;
         }
