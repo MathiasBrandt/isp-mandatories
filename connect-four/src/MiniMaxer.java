@@ -250,16 +250,7 @@ public class MiniMaxer {
         int initialRow = state.getLastCoinPosition().snd;
         int playerID = state.getBoard()[initialColumn][initialRow];
 
-        int result = 0;
-
-        // Switch column/row because the eval table is switched around.
-        if(playerID == PLAYER_MIN){
-            result = -evaluationTable[initialRow][initialColumn];
-            return result;
-        } else {
-            result = evaluationTable[initialRow][initialColumn];
-            return result;
-        }
+        return evaluationTable[initialRow][initialColumn];
     }
 
     /**
