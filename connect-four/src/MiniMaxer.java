@@ -204,7 +204,7 @@ public class MiniMaxer {
     /**
      *
      * @param state
-     * @return amount of win combinations that the lastCoinPosition is a part of.
+     * @return the number of directions that is a possible win (i.e., has 4 coins or blanks in a row)
      */
     public int winCombinationsCount(GameState state){
         int initialColumn = state.getLastCoinPosition().fst;
