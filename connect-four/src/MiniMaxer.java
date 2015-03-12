@@ -10,7 +10,7 @@ public class MiniMaxer {
     public final int PLAYER_MAX = 2;
     public int aiPlayerId;
     public int otherPlayerId;
-    public final int CUTOFF = 5;
+    public final int CUTOFF = 7;
 
     public MiniMaxer(int playerId) {
         aiPlayerId = playerId;
@@ -175,14 +175,10 @@ public class MiniMaxer {
         count = Integer.max(count, state.checkHorizontal(playerID, initialColumn, initialRow, false));
         count = Integer.max(count, state.checkVertical(playerID, initialColumn, initialRow, false));
 
+        System.out.println("### Player ID = " + playerID);
+
         // Create score for adversary by switching id and counting score.
-        if(playerID == PLAYER_MIN){
-            playerID = PLAYER_MAX;
-        } else if (playerID == PLAYER_MAX){
-            playerID = PLAYER_MIN;
-        } else {
-            System.out.println("Something went wrong");
-        }
+        playerID = playerID == aiPlayerId ? otherPlayerId : aiPlayerId;
 
         // How many coins does the opponent have in a row.
         int opponentCount = Integer.max(state.checkDiagonalOne(playerID, initialColumn, initialRow, false), state.checkDiagonalTwo(playerID, initialColumn, initialRow, false));
@@ -245,24 +241,7 @@ public class MiniMaxer {
      * @return the utility value of the winning player, or -1 if the game is not over
      */
     private double eval(GameState state){
-        //
-//        switch(state.gameFinished()) {
-//            case PLAYER1:
-//                if(aiPlayerId == 1){
-//                    return UTILITY_MAX;
-//                } else {
-//                    return UTILITY_MIN;
-//                }
-//            case PLAYER2:
-//                if(aiPlayerId == 2){
-//                    return UTILITY_MAX;
-//                } else {
-//                    return UTILITY_MIN;
-//                }
-//            case TIE:
-//                return UTILITY_TIE;
-//        }
-
+        // Get info for last placed coin.
         int column = state.getLastCoinPosition().fst;
         int row = state.getLastCoinPosition().snd;
         int playerID = state.getBoard()[column][row];
@@ -270,34 +249,37 @@ public class MiniMaxer {
         int score = 0;
 
         int coinsInARow = maxCoinsInARow(state);
-        if(coinsInARow >= GameState.WIN_CONDITION){
-            if(aiPlayerId == playerID){
-                return UTILITY_MAX;
-            } else {
-                return UTILITY_MIN;
-            }
+        if(coinsInARow >= GameState.WIN_CONDITION ){
+            System.out.println("### LOL");
+            return UTILITY_MAX;
+//            if(aiPlayerId == playerID){
+//                return UTILITY_MAX;
+//            } else {
+//                return UTILITY_MIN;
+//            }
         } else {
-            if(playerID != aiPlayerId){
-                score -= coinsInARow;
-            } else {
-                score += coinsInARow;
-            }
-        }
-
-        int positionValue = coinPositionValue(state);
-        score += positionValue;
-
-
-        int winCombinations = winCombinationsCount(state);
-        if(winCombinations <= 0){
             if(playerID == aiPlayerId){
-                return UTILITY_MAX;
-            } else {
-                return UTILITY_MIN;
+                score += coinsInARow * 3;
             }
-        } else {
-            score += winCombinations;
+//            else {
+//                score -= coinsInARow;
+//            }
         }
+
+//        int positionValue = coinPositionValue(state);
+//        score += positionValue;
+//
+//
+//        int winCombinations = winCombinationsCount(state);
+//        if(winCombinations <= 0){
+//            if(playerID == aiPlayerId){
+//                return UTILITY_MAX;
+//            } else {
+//                return UTILITY_MIN;
+//            }
+//        } else {
+//            score += winCombinations;
+//        }
 
         System.out.println("The score is: " + score);
         return score;
