@@ -343,7 +343,7 @@ public class GameState {
     }
 
     public static void main(String[] args) {
-        int[][] b1 = {{1}};
+        /*int[][] b1 = {{1}};
         GameState g1 = new GameState(b1, null);
         GameState.debugPrint(g1, 0);
 
@@ -367,19 +367,27 @@ public class GameState {
         GameState g6 = new GameState(b6, null);
         GameState.debugPrint(g6, 2);
 
-        int[][] b7 = {{0}, {0}, {0}, {1}, {0}, {0}, {0}};
+        int[][] b7 = {{1}, {0}, {0}, {0}, {0}, {0}, {0}};
         GameState g7 = new GameState(b7, null);
-        GameState.debugPrint(g7, 3);
+        GameState.debugPrint(g7, 3);*/
 
-        int[][] b8 = {{0}, {0}, {2}, {0}, {1}, {0}, {0}, {0}};
+        int[][] b8 = {{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 2}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
         GameState g8 = new GameState(b8, null);
         GameState.debugPrint(g8, 4);
     }
 
     public static void debugPrint(GameState g, int col) {
+        System.out.println("### STATE");
         g.printState();
+
+        System.out.println("### HORIZONTAL");
         System.out.println("successive coins      : " + g.checkHorizontal(1, col, 0, false));
         System.out.println("including blanks      : " + g.checkHorizontal(1, col, 0, true));
         System.out.println("possible win positions: " + (g.checkHorizontal(1, col, 0, true) - g.WIN_CONDITION + 1));
+
+        System.out.println("### VERTICAL");
+        System.out.println("successive coins      : " + g.checkVertical(1, col, 0, false));
+        System.out.println("including blanks      : " + g.checkVertical(1, col, 2, true));
+        System.out.println("possible win positions: " + (g.checkVertical(1, col, 0, true) - g.WIN_CONDITION + 1));
     }
 }
