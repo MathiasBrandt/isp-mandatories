@@ -11,7 +11,7 @@ public class MiniMaxer {
     public final int PLAYER_MIN = 1;
     public final int PLAYER_MAX = 2;
     public int aiPlayerId;
-    public final int CUTOFF = 1;
+    public final int CUTOFF = 5;
 
     public MiniMaxer(int playerId) {
         aiPlayerId = playerId;
@@ -34,57 +34,29 @@ public class MiniMaxer {
         double alpha = Double.NEGATIVE_INFINITY;
         double beta = Double.POSITIVE_INFINITY;
 
-        // if the AI is playing as MIN we want to find the lowest minimax value.
-        if(aiPlayerId == PLAYER_MIN) {
-            // go through each possible action (i.e., column) in the current state
-            for(int i = 0; i < state.getColumnCount(); i++) {
-                // if the action is actually in the list of possible actions, i.e., if the column is NOT full
-                if(!state.isColumnFull(i)) {
-                    // calculate the minimax value for this action
-                    GameState copyState = state.copyState();
-                    copyState.insertCoin(i, PLAYER_MIN);
-                    minimaxValues[i] = maxValue(copyState, alpha, beta, 0);
-                } else {
-                    // if the action is not in the list of possible actions, assign a value to indicate such.
-                    minimaxValues[i] = Double.NaN;
-                }
-            }
-
-            // initialize with dummy value
-            double minValue = Double.POSITIVE_INFINITY;
-
-            // go through all of the calculated minimax values to pick the best corresponding action
-            System.out.println("Minimizer Choosing");
-            for(int i = 0; i < minimaxValues.length; i++) {
-                System.out.println(minimaxValues[i]);
-                if(minimaxValues[i] < minValue) {
-                    bestAction = i;
-                    minValue = minimaxValues[i];
-                }
+        // go through each possible action (i.e., column) in the current state
+        for(int i = 0; i < state.getColumnCount(); i++) {
+            // if the action is actually in the list of possible actions, i.e., if the column is NOT full
+            if(!state.isColumnFull(i)) {
+                // calculate the minimax value for this action
+                GameState copyState = state.copyState();
+                copyState.insertCoin(i, PLAYER_MAX);
+                minimaxValues[i] = minValue(copyState, alpha, beta, 0);
+            } else {
+                // if the action is not in the list of possible actions, assign a value to indicate such.
+                minimaxValues[i] = Double.NaN;
             }
         }
-        // if the AI is playing as MAX the operations are the same as if the AI was
-        // playing as MIN, except now we want the highest minimax value.
-        // Comments have been omitted.
-        else {
-            for(int i = 0; i < state.getColumnCount(); i++) {
-                if(!state.isColumnFull(i)) {
-                    GameState copyState = state.copyState();
-                    copyState.insertCoin(i, PLAYER_MAX);
-                    minimaxValues[i] = minValue(copyState, alpha, beta, 0);
-                } else {
-                    minimaxValues[i] = Double.NaN;
-                }
-            }
 
-            double maxValue = Double.NEGATIVE_INFINITY;
-            for(int i = 0; i < minimaxValues.length; i++) {
-                System.out.println(minimaxValues[i]);
+        // initialize with dummy value
+        double minValue = Double.POSITIVE_INFINITY;
 
-                if(minimaxValues[i] > maxValue) {
-                    bestAction = i;
-                    maxValue = minimaxValues[i];
-                }
+        // go through all of the calculated minimax values to pick the best corresponding action
+        for(int i = 0; i < minimaxValues.length; i++) {
+            System.out.println(minimaxValues[i]);
+            if(minimaxValues[i] < minValue) {
+                bestAction = i;
+                minValue = minimaxValues[i];
             }
         }
 
@@ -190,7 +162,7 @@ public class MiniMaxer {
         count = Integer.max(count, state.checkHorizontal(playerID, initialColumn, initialRow, false));
         count = Integer.max(count, state.checkVertical(playerID, initialColumn, initialRow, false));
 
-        // Create score for adversary
+        // Create score for adversary by switching id and counting score.
         if(playerID == PLAYER_MIN){
             playerID = PLAYER_MAX;
         } else if (playerID == PLAYER_MAX){
@@ -199,6 +171,7 @@ public class MiniMaxer {
             System.out.println("Something went wrong");
         }
 
+        // How many coins does the opponent have in a row.
         int opponentCount = Integer.max(state.checkDiagonalOne(playerID, initialColumn, initialRow, false), state.checkDiagonalTwo(playerID, initialColumn, initialRow, false));
         opponentCount = Integer.max(opponentCount, state.checkHorizontal(playerID, initialColumn, initialRow, false));
         opponentCount = Integer.max(opponentCount, state.checkVertical(playerID, initialColumn, initialRow, false));
@@ -248,7 +221,6 @@ public class MiniMaxer {
 
         int initialColumn = state.getLastCoinPosition().fst;
         int initialRow = state.getLastCoinPosition().snd;
-        int playerID = state.getBoard()[initialColumn][initialRow];
 
         return evaluationTable[initialRow][initialColumn];
     }
@@ -263,13 +235,18 @@ public class MiniMaxer {
         //
         switch(state.gameFinished()) {
             case PLAYER1:
-                System.out.println("player1");
-                return UTILITY_MIN;
+                if(aiPlayerId == 1){
+                    return UTILITY_MAX;
+                } else {
+                    return UTILITY_MIN;
+                }
             case PLAYER2:
-                System.out.println("player2");
-                return UTILITY_MAX;
+                if(aiPlayerId == 2){
+                    return UTILITY_MAX;
+                } else {
+                    return UTILITY_MIN;
+                }
             case TIE:
-                System.out.println("tie");
                 return UTILITY_TIE;
         }
 
@@ -281,13 +258,13 @@ public class MiniMaxer {
 
         int coinsInARow = maxCoinsInARow(state);
         if(coinsInARow >= GameState.WIN_CONDITION){
-            if(playerID == PLAYER_MIN){
-                return UTILITY_MIN;
-            } else {
+            if(aiPlayerId == playerID){
                 return UTILITY_MAX;
+            } else {
+                return UTILITY_MIN;
             }
         } else {
-            if(playerID == PLAYER_MIN){
+            if(playerID != aiPlayerId){
                 score -= coinsInARow;
             } else {
                 score += coinsInARow;
@@ -295,26 +272,18 @@ public class MiniMaxer {
         }
 
         int positionValue = coinPositionValue(state);
-        if(playerID == PLAYER_MIN){
-            score += -positionValue;
-        } else {
-            score += positionValue;
-        }
+        score += positionValue;
+
 
         int winCombinations = winCombinationsCount(state);
-
         if(winCombinations <= 0){
-            if(playerID == PLAYER_MIN){
+            if(playerID == aiPlayerId){
                 return UTILITY_MAX;
             } else {
                 return UTILITY_MIN;
             }
         } else {
-            if(playerID == PLAYER_MIN){
-                score += -winCombinations;
-            } else {
-                score += winCombinations;
-            }
+            score += winCombinations;
         }
 
         System.out.println("The score is: " + score);
