@@ -1,6 +1,6 @@
 /**
  *  Intelligent Systems Programming
- *      Connect Four
+ *  Connect Four
  * @Author Mathias Flink Brandt.(mfli@itu.dk)
  * @Author Simon Langhoff (siml@itu.dk)
  */
@@ -16,8 +16,7 @@ public class MiniMaxer {
     public final int CUTOFF = 8;
 
     /**
-     * Our implementation of the Minimax Algorithm with pruning, cutoff and evaluation features.
-     * @param playerId
+     * Our implementation of the Minimax Algorithm with pruning, cut-off and evaluation features.
      */
     public MiniMaxer(int playerId) {
         aiPlayerId = playerId;
@@ -26,17 +25,12 @@ public class MiniMaxer {
         } else {
             otherPlayerId = PLAYER_MAX;
         }
-        System.out.println("AI Player id is: " + aiPlayerId);
-        System.out.println("Other player id is: " + otherPlayerId);
     }
 
     /**
-     * In the current state, calculate the best possible action.
-     * @param state the current state
-     * @return the best possible action
+     * In the current state, determine the best possible column to place a coin in.
      */
     public int minimaxDecision(GameState state) {
-        // the best action to pick
         int bestColumn = -1;
         double bestValue = Double.NEGATIVE_INFINITY;
 
@@ -44,13 +38,12 @@ public class MiniMaxer {
         for(int i = 0; i < state.getColumnCount(); i++) {
             // if the action is actually in the list of possible actions, i.e., if the column is NOT full
             if(!state.isColumnFull(i)) {
-                // calculate the minimax value for this action
+                // calculate the minimax value for this column
                 GameState copyState = state.copyState();
                 copyState.insertCoin(i, aiPlayerId);
                 double value = minValue(copyState, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
-                System.out.println("### Column " + i + " " + value);
                 if(value > bestValue){
-                    // This must be the currently best option. So store it's value and store the best column.
+                    // This must be the currently best option. So store it's value and store the corresponding column.
                     bestValue = value;
                     bestColumn = i;
                 }
@@ -62,10 +55,6 @@ public class MiniMaxer {
 
     /**
      * Returns the lowest utility value for the current state.
-     * @param state the current state
-     * @param alpha the parent node's alpha value
-     * @param beta the parent node's beta value
-     * @return the lowest utility value
      */
     private double minValue(GameState state, double alpha, double beta, int depth) {
         double finished = isGameFinished(state);
@@ -80,7 +69,6 @@ public class MiniMaxer {
         }
         depth++;
 
-        // initialize with dummy value
         double result = Double.POSITIVE_INFINITY;
 
         // try to perform each possible action and keep track of the best one
@@ -105,10 +93,6 @@ public class MiniMaxer {
 
     /**
      * Returns the highest utility value for the current state.
-     * @param state the current state
-     * @param alpha the parent node's alpha value
-     * @param beta the parent node's beta value
-     * @return the highest utility value
      */
     private double maxValue(GameState state, double alpha, double beta, int depth) {
         // NOTE: some comments have been omitted since they are more or less the same as in the minValue method
@@ -146,7 +130,11 @@ public class MiniMaxer {
         return depth >= CUTOFF;
     }
 
-    // Check if the game is finished, if so, return the utility value of the state.
+
+
+    /**
+     * Check if the game is finished, if so, return the utility value of the state.
+     */
     private double isGameFinished(GameState state){
         IGameLogic.Winner winner = state.gameFinished();
         if(winner != IGameLogic.Winner.NOT_FINISHED){
@@ -169,9 +157,8 @@ public class MiniMaxer {
     }
 
     /**
-     * Counts the maximum amount of coins that are connected in a row based upon the lastCoinPosition. Counts for both the current player and the opponent and returns the highest number.
-     * @param state
-     * @return
+     * Counts the maximum amount of coins that are connected in a row based upon the lastCoinPosition.
+     * Counts for both the current player and the opponent and returns the highest value.
      */
     public int maxCoinsInARow(GameState state){
         int initialColumn = state.getLastCoinPosition().fst;
@@ -190,14 +177,12 @@ public class MiniMaxer {
         opponentCount = Integer.max(opponentCount, state.checkHorizontal(playerID, initialColumn, initialRow, false));
         opponentCount = Integer.max(opponentCount, state.checkVertical(playerID, initialColumn, initialRow, false));
 
-        // We return the highest number, because if the opponent has a good position, we are interested in disrupting his position.
+        // We return the highest value, because if the opponent has a good position, we are interested in disrupting his position.
         return Integer.max(opponentCount, count);
     }
 
     /**
-     *
-     * @param state
-     * @return the number of directions that is a possible win (i.e., has 4 coins or blanks in a row)
+     * Counts the number of axes that is a possible win (i.e., has 4 coins or blanks in a row)
      */
     public int winCombinationsCount(GameState state){
         int initialColumn = state.getLastCoinPosition().fst;
@@ -214,10 +199,8 @@ public class MiniMaxer {
     }
 
     /**
-     * Looks up static evaluation table and returns a value based on the {@code} lastCoinPosition.
+     * Looks up the static evaluation table and returns a value based on the lastCoinPosition.
      * Credit goes to: http://programmers.stackexchange.com/questions/263514/why-does-this-evaluation-function-work-in-a-connect-four-game-in-java
-     * @param state
-     * @return
      */
     public int coinPositionValue(GameState state){
         // For now, this is only implemented for a 7x6 board.
@@ -242,9 +225,7 @@ public class MiniMaxer {
 
     /**
      * If the game has finished in the current state, i.e., the board is full or one of the
-     * players has won, return the corresponding utility value. Otherwise return -1
-     * @param state the current state
-     * @return the utility value of the winning player, or -1 if the game is not over
+     * players has won, return the corresponding utility value. Otherwise return -1.
      */
     private double eval(GameState state){
         // Get info for last placed coin.

@@ -3,7 +3,10 @@ import com.sun.tools.javac.util.Pair;
 import java.util.Arrays;
 
 /**
- * Created by brandt on 10/03/15.
+ *  Intelligent Systems Programming
+ *  Connect Four
+ * @Author Mathias Flink Brandt.(mfli@itu.dk)
+ * @Author Simon Langhoff (siml@itu.dk)
  */
 public class GameState {
     public static final int WIN_CONDITION = 4;
@@ -12,7 +15,6 @@ public class GameState {
     private int columns;
     private int rows;
     private Pair<Integer, Integer> lastCoinPosition;
-    //private int lastPlayer;
 
     public GameState(int columns, int rows) {
         this.columns = columns;
@@ -21,14 +23,12 @@ public class GameState {
         board = new int[columns][rows];
     }
 
-    //public GameState(int columns, int rows, int[][] board, Pair<Integer, Integer> lastCoinPosition, int lastPlayer) {
     public GameState(int[][] board, Pair<Integer, Integer> lastCoinPosition) {
         this.columns = board.length;
         this.rows = board[0].length;
 
         this.board = board;
         this.lastCoinPosition = lastCoinPosition;
-        //this.lastPlayer = lastPlayer;
     }
 
     public Pair<Integer, Integer> getLastCoinPosition() {
@@ -53,14 +53,13 @@ public class GameState {
 
         board[column][row] = playerId;
 
-//        printState();
-//        System.out.println();
-
-
         // save last coin placement
         lastCoinPosition = new Pair(column, row);
     }
 
+    /**
+     * Returns the row id for where the coin will be placed if inserted in the specified column.
+     */
     public int getNextAvailableRow(int column) {
         for(int i = rows-1; i >= 0; i--) {
             if(board[column][i] == 0) {
@@ -71,6 +70,9 @@ public class GameState {
         return -1;
     }
 
+    /**
+     * Checks the current state of the game and returns the winner or Winner.TIE if the game is over, otherwise returns Winner.NOT_FINISHED.
+     */
     public IGameLogic.Winner gameFinished() {
         if(lastCoinPosition == null){
             return IGameLogic.Winner.NOT_FINISHED;
@@ -78,8 +80,6 @@ public class GameState {
         int column = lastCoinPosition.fst;
         int row = lastCoinPosition.snd;
         int playerID = board[column][row];
-
-        // printState();
 
         int horizontalCount = checkHorizontal(playerID, column, row, false);
         int verticalCount = checkVertical(playerID, column, row, false);
@@ -119,7 +119,6 @@ public class GameState {
             newState[i] = Arrays.copyOf(board[i], board[i].length);
         }
 
-        //return new GameState(columns, rows, newState, lastCoinPosition, lastPlayer);
         return new GameState(newState, lastCoinPosition);
     }
 
@@ -142,12 +141,7 @@ public class GameState {
     }
 
     /**
-     * Counts the consecutive amount of coins of the player who last placed a coin in the row of which
-     * that coin was placed.
-     * @param playerID
-     * @param initialColumn
-     * @param initialRow
-     * @return
+     * Counts the consecutive amount of coins on the horizontal axis starting from where the last coin was placed.
      */
     public int checkHorizontal(int playerID, int initialColumn, int initialRow, boolean includeBlanks) {
         // count is initially 1 because we placed a coin
@@ -196,8 +190,11 @@ public class GameState {
         return count;
     }
 
+    /**
+     * Counts the amount of consecutive coins on the vertical axis, starting from where the last coin was placed.
+     */
     public int checkVertical(int playerID, int initialColumn, int initialRow, boolean includeBlanks) {
-        // start counting from initialRow + 1, since we placed a coin in initialRow.
+        // start counting with an offset of 1, since we placed a coin in initialRow.
         // Also, that's why count starts at 1 instead of 0. We don't need to check initialRow.
         int count = 1;
         int offset = 1;
@@ -241,11 +238,7 @@ public class GameState {
     }
 
     /**
-     * Counts the consecutive amount of coins of the player who last placed a coin downwards from left to right.
-     * @param playerID
-     * @param initialColumn
-     * @param initialRow
-     * @return
+     * Counts the amount of consecutive coins on the diagonal axis going downwards from left to right.
      */
     public int checkDiagonalOne(int playerID, int initialColumn, int initialRow, boolean includeBlanks) {
         int count = 1;
@@ -257,15 +250,11 @@ public class GameState {
         while(checkLeft || checkRight) {
             // check if out of bounds on the left hand side.
             if(initialRow - offset < 0 || initialColumn - offset < 0){
-                //System.out.println("Not checking left anymore");
-                //System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
                 checkLeft = false;
             }
             if(initialRow + offset >= rows || initialColumn + offset >= columns){
                 // Check bounds on the right hand side.
                 checkRight = false;
-                //System.out.println("Not checking right anymore");
-                //System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
             }
 
             if(checkLeft){
@@ -274,8 +263,6 @@ public class GameState {
                 } else if(includeBlanks && board[initialColumn - offset][initialRow - offset] == MiniMaxer.PLAYER_BLANK) {
                     count++;
                 } else {
-                    //System.out.println("Not checking left anymore");
-                    //System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
                     checkLeft = false;
                 }
             }
@@ -285,24 +272,17 @@ public class GameState {
                 } else if(includeBlanks && board[initialColumn + offset][initialRow + offset] == MiniMaxer.PLAYER_BLANK) {
                     count++;
                 } else {
-                    //System.out.println("Not checking right anymore");
-                    //System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
                     checkRight = false;
                 }
             }
             offset++;
         }
 
-
         return count;
     }
 
     /**
-     * Counts the consecutive amount of coins of the player who last placed a coin upwards from left to right.
-     * @param playerID
-     * @param initialColumn
-     * @param initialRow
-     * @return
+     * Counts the amount of consecutive coins on the diagonal axis going upwards from left to right.
      */
     public int checkDiagonalTwo(int playerID, int initialColumn, int initialRow, boolean includeBlanks) {
         int count = 1;
@@ -314,15 +294,11 @@ public class GameState {
         while(checkLeft || checkRight) {
             // check if out of bounds on the left hand side.
             if(initialRow + offset >= rows || initialColumn - offset < 0){
-                //System.out.println("Not checking left anymore");
-                //System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
                 checkLeft = false;
             }
             if(initialRow - offset < 0 || initialColumn + offset >= columns){
                 // out of bounds on the right hand side.
                 checkRight = false;
-                //System.out.println("Not checking right anymore");
-                //System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
             }
 
             if(checkLeft) {
@@ -331,8 +307,6 @@ public class GameState {
                 } else if(includeBlanks && board[initialColumn - offset][initialRow + offset] == MiniMaxer.PLAYER_BLANK) {
                     count++;
                 } else {
-                    //System.out.println("Not checking left anymore");
-                    //System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
                     checkLeft = false;
                 }
             }
@@ -342,8 +316,6 @@ public class GameState {
                 } else if(includeBlanks && board[initialColumn + offset][initialRow - offset] == MiniMaxer.PLAYER_BLANK) {
                     count++;
                 } else {
-                    //System.out.println("Not checking right anymore");
-                    //System.out.println(String.format("Offset: %d InitialRow: %d InitialColumn: %d", offset, initialRow, initialColumn));
                     checkRight = false;
                 }
             }
@@ -351,55 +323,5 @@ public class GameState {
         }
 
         return count;
-    }
-
-    public static void main(String[] args) {
-        /*int[][] b1 = {{1}};
-        GameState g1 = new GameState(b1, null);
-        GameState.debugPrint(g1, 0);
-
-        int[][] b2 = {{1}, {0}};
-        GameState g2 = new GameState(b2, null);
-        GameState.debugPrint(g2, 0);
-
-        int[][] b3 = {{1}, {0}, {0}};
-        GameState g3 = new GameState(b3, null);
-        GameState.debugPrint(g3, 0);
-
-        int[][] b4 = {{1}, {0}, {0}, {0}};
-        GameState g4 = new GameState(b4, null);
-        GameState.debugPrint(g4, 0);
-
-        int[][] b5 = {{0}, {1}, {0}, {0}, {0}};
-        GameState g5 = new GameState(b5, null);
-        GameState.debugPrint(g5, 1);
-
-        int[][] b6 = {{0}, {0}, {1}, {0}, {0}, {0}};
-        GameState g6 = new GameState(b6, null);
-        GameState.debugPrint(g6, 2);
-
-        int[][] b7 = {{1}, {0}, {0}, {0}, {0}, {0}, {0}};
-        GameState g7 = new GameState(b7, null);
-        GameState.debugPrint(g7, 3);*/
-
-        int[][] b8 = {{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 2, 2}, {0, 0, 0, 0, 0, 1}, {0, 0, 0, 0, 2, 2}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
-        GameState g8 = new GameState(b8, null);
-        GameState.debugPrint(g8, 3, 5);
-    }
-
-    public static void debugPrint(GameState g, int col, int row) {
-        System.out.println("### NEWEST COIN");
-        System.out.println("Col: " + col + ", row: " + row);
-
-        System.out.println("### STATE");
-        g.printState();
-
-        int possibleWins = 0;
-        if(g.checkHorizontal(1, col, row, true) >= g.WIN_CONDITION) { possibleWins++; }
-        if(g.checkVertical(1, col, row, true) >= g.WIN_CONDITION) { possibleWins++; }
-        if(g.checkDiagonalOne(1, col, row, true) >= g.WIN_CONDITION) { possibleWins++; }
-        if(g.checkDiagonalTwo(1, col, row, true) >= g.WIN_CONDITION) { possibleWins++; }
-
-        System.out.println("### POSSIBLE WINS: " + possibleWins);
     }
 }
