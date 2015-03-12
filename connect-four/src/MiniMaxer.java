@@ -10,8 +10,12 @@ public class MiniMaxer {
     public final int PLAYER_MAX = 2;
     public int aiPlayerId;
     public int otherPlayerId;
-    public final int CUTOFF = 5;
+    public final int CUTOFF = 8;
 
+    /**
+     *
+     * @param playerId
+     */
     public MiniMaxer(int playerId) {
         aiPlayerId = playerId;
         if(playerId == PLAYER_MAX){
@@ -139,6 +143,7 @@ public class MiniMaxer {
         return depth >= CUTOFF;
     }
 
+    // Check if the game is finished, if so, return the utility value of the state.
     private double isGameFinished(GameState state){
         IGameLogic.Winner winner = state.gameFinished();
         if(winner != IGameLogic.Winner.NOT_FINISHED){
@@ -159,8 +164,6 @@ public class MiniMaxer {
             return Double.NaN;
         }
     }
-
-
 
     /**
      * Counts the maximum amount of coins that are connected in a row based upon the lastCoinPosition. Counts for both the current player and the opponent and returns the highest number.
@@ -255,14 +258,14 @@ public class MiniMaxer {
             return UTILITY_MAX;
         } else {
             if(playerID == aiPlayerId){
-                score += coinsInARow * 3;
+                score += coinsInARow * 6;
             }
         }
 
         int winCombinations = winCombinationsCount(state);
         // If the coin placed has any value in terms of winning combinations.
         if(winCombinations > 0) {
-            score += winCombinations * 2;
+            score += winCombinations * 3;
         }
         return score;
     }
