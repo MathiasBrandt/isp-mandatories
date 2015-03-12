@@ -11,10 +11,11 @@ public class MiniMaxer {
     public final int PLAYER_MIN = 1;
     public final int PLAYER_MAX = 2;
     public int aiPlayerId;
-    public final int CUTOFF = 5;
+    public final int CUTOFF = 1;
 
     public MiniMaxer(int playerId) {
         aiPlayerId = playerId;
+        System.out.println("AI Player id is: " + aiPlayerId);
     }
 
     /**
@@ -40,8 +41,9 @@ public class MiniMaxer {
                 // if the action is actually in the list of possible actions, i.e., if the column is NOT full
                 if(!state.isColumnFull(i)) {
                     // calculate the minimax value for this action
-                    state.insertCoin(i, PLAYER_MIN);
-                    minimaxValues[i] = maxValue(state.copyState(), alpha, beta, 0);
+                    GameState copyState = state.copyState();
+                    copyState.insertCoin(i, PLAYER_MIN);
+                    minimaxValues[i] = maxValue(copyState, alpha, beta, 0);
                 } else {
                     // if the action is not in the list of possible actions, assign a value to indicate such.
                     minimaxValues[i] = Double.NaN;
@@ -52,6 +54,7 @@ public class MiniMaxer {
             double minValue = Double.POSITIVE_INFINITY;
 
             // go through all of the calculated minimax values to pick the best corresponding action
+            System.out.println("Minimizer Choosing");
             for(int i = 0; i < minimaxValues.length; i++) {
                 System.out.println(minimaxValues[i]);
                 if(minimaxValues[i] < minValue) {
@@ -66,8 +69,9 @@ public class MiniMaxer {
         else {
             for(int i = 0; i < state.getColumnCount(); i++) {
                 if(!state.isColumnFull(i)) {
-                    state.insertCoin(i, PLAYER_MAX);
-                    minimaxValues[i] = minValue(state.copyState(), alpha, beta, 0);
+                    GameState copyState = state.copyState();
+                    copyState.insertCoin(i, PLAYER_MAX);
+                    minimaxValues[i] = minValue(copyState, alpha, beta, 0);
                 } else {
                     minimaxValues[i] = Double.NaN;
                 }
@@ -199,11 +203,7 @@ public class MiniMaxer {
         opponentCount = Integer.max(opponentCount, state.checkHorizontal(playerID, initialColumn, initialRow, false));
         opponentCount = Integer.max(opponentCount, state.checkVertical(playerID, initialColumn, initialRow, false));
 
-        if(count > opponentCount){
-            return opponentCount;
-        } else {
-            return count;
-        }
+        return Integer.max(opponentCount, count);
     }
 
     /**
@@ -273,15 +273,51 @@ public class MiniMaxer {
                 return UTILITY_TIE;
         }
 
+        int column = state.getLastCoinPosition().fst;
+        int row = state.getLastCoinPosition().snd;
+        int playerID = state.getBoard()[column][row];
+
         int score = 0;
 
-        score += maxCoinsInARow(state);
-        score += winCombinationsCount(state);
-        score += coinPositionValue(state);
+        int coinsInARow = maxCoinsInARow(state);
+        if(coinsInARow >= GameState.WIN_CONDITION){
+            if(playerID == PLAYER_MIN){
+                return UTILITY_MIN;
+            } else {
+                return UTILITY_MAX;
+            }
+        } else {
+            if(playerID == PLAYER_MIN){
+                score -= coinsInARow;
+            } else {
+                score += coinsInARow;
+            }
+        }
+
+        int positionValue = coinPositionValue(state);
+        if(playerID == PLAYER_MIN){
+            score += -positionValue;
+        } else {
+            score += positionValue;
+        }
+
+        int winCombinations = winCombinationsCount(state);
+
+        if(winCombinations <= 0){
+            if(playerID == PLAYER_MIN){
+                return UTILITY_MAX;
+            } else {
+                return UTILITY_MIN;
+            }
+        } else {
+            if(playerID == PLAYER_MIN){
+                score += -winCombinations;
+            } else {
+                score += winCombinations;
+            }
+        }
 
         System.out.println("The score is: " + score);
-
-
         return score;
     }
 }

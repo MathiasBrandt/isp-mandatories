@@ -10,6 +10,7 @@ import java.util.Random;
 public class SimlMfliGameLogic implements IGameLogic {
     private GameState gameState;
     private MiniMaxer miniMaxer;
+    private boolean initialized;
 
     public SimlMfliGameLogic() {
 

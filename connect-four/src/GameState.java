@@ -79,22 +79,12 @@ public class GameState {
         int row = lastCoinPosition.snd;
         int playerID = board[column][row];
 
-        System.out.println("col: " + column);
-        System.out.println("row: " + row);
-        System.out.println("pla: " + playerID);
-
-        printState();
+        // printState();
 
         int horizontalCount = checkHorizontal(playerID, column, row, false);
         int verticalCount = checkVertical(playerID, column, row, false);
         int diagonalOneCount = checkDiagonalOne(playerID, column, row, false);
         int diagonalTwoCount = checkDiagonalTwo(playerID, column, row, false);
-
-        //
-//        System.out.println("Horizontal Count = " + horizontalCount);
-//        System.out.println("Vertical Count = " + verticalCount);
-//        System.out.println("DiagonalOne Count = " + diagonalOneCount);
-//        System.out.println("DiagonalTwo Count = " + diagonalTwoCount);
 
         boolean gameOver = horizontalCount >= WIN_CONDITION ||
                            verticalCount >= WIN_CONDITION ||
