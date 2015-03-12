@@ -77,6 +77,12 @@ public class GameState {
         int row = lastCoinPosition.snd;
         int playerID = board[column][row];
 
+        System.out.println("col: " + column);
+        System.out.println("row: " + row);
+        System.out.println("pla: " + playerID);
+
+        printState();
+
         int horizontalCount = checkHorizontal(playerID, column, row, false);
         int verticalCount = checkVertical(playerID, column, row, false);
         int diagonalOneCount = checkDiagonalOne(playerID, column, row, false);
@@ -377,7 +383,7 @@ public class GameState {
         GameState g7 = new GameState(b7, null);
         GameState.debugPrint(g7, 3);*/
 
-        int[][] b8 = {{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 2}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
+        int[][] b8 = {{0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 2}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 1}, {0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0}};
         GameState g8 = new GameState(b8, null);
         GameState.debugPrint(g8, 4);
     }
@@ -387,13 +393,13 @@ public class GameState {
         g.printState();
 
         System.out.println("### HORIZONTAL");
-        System.out.println("successive coins      : " + g.checkHorizontal(1, col, 0, false));
-        System.out.println("including blanks      : " + g.checkHorizontal(1, col, 0, true));
-        System.out.println("possible win positions: " + (g.checkHorizontal(1, col, 0, true) - g.WIN_CONDITION + 1));
+        System.out.println("successive coins      : " + g.checkHorizontal(1, col, 5, false));
+        System.out.println("including blanks      : " + g.checkHorizontal(1, col, 5, true));
+        System.out.println("possible win positions: " + (g.checkHorizontal(1, col, 5, true) - g.WIN_CONDITION + 1));
 
         System.out.println("### VERTICAL");
-        System.out.println("successive coins      : " + g.checkVertical(1, col, 0, false));
-        System.out.println("including blanks      : " + g.checkVertical(1, col, 2, true));
-        System.out.println("possible win positions: " + (g.checkVertical(1, col, 0, true) - g.WIN_CONDITION + 1));
+        System.out.println("successive coins      : " + g.checkVertical(1, col, 5, false));
+        System.out.println("including blanks      : " + g.checkVertical(1, col, 5, true));
+        System.out.println("possible win positions: " + (g.checkVertical(1, col, 5, true) - g.WIN_CONDITION + 1));
     }
 }
