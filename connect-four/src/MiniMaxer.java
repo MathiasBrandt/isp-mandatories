@@ -40,6 +40,7 @@ public class MiniMaxer {
                 // if the action is actually in the list of possible actions, i.e., if the column is NOT full
                 if(!state.isColumnFull(i)) {
                     // calculate the minimax value for this action
+                    state.insertCoin(i, PLAYER_MIN);
                     minimaxValues[i] = maxValue(state.copyState(), alpha, beta, 0);
                 } else {
                     // if the action is not in the list of possible actions, assign a value to indicate such.
@@ -65,6 +66,7 @@ public class MiniMaxer {
         else {
             for(int i = 0; i < state.getColumnCount(); i++) {
                 if(!state.isColumnFull(i)) {
+                    state.insertCoin(i, PLAYER_MAX);
                     minimaxValues[i] = minValue(state.copyState(), alpha, beta, 0);
                 } else {
                     minimaxValues[i] = Double.NaN;
