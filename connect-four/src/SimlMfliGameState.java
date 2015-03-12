@@ -8,7 +8,7 @@ import java.util.Arrays;
  * @Author Mathias Flink Brandt.(mfli@itu.dk)
  * @Author Simon Langhoff (siml@itu.dk)
  */
-public class GameState {
+public class SimlMfliGameState {
     public static final int WIN_CONDITION = 4;
 
     private int[][] board;
@@ -16,14 +16,14 @@ public class GameState {
     private int rows;
     private Pair<Integer, Integer> lastCoinPosition;
 
-    public GameState(int columns, int rows) {
+    public SimlMfliGameState(int columns, int rows) {
         this.columns = columns;
         this.rows = rows;
 
         board = new int[columns][rows];
     }
 
-    public GameState(int[][] board, Pair<Integer, Integer> lastCoinPosition) {
+    public SimlMfliGameState(int[][] board, Pair<Integer, Integer> lastCoinPosition) {
         this.columns = board.length;
         this.rows = board[0].length;
 
@@ -112,14 +112,14 @@ public class GameState {
         return getNextAvailableRow(column) < 0;
     }
 
-    public GameState copyState() {
+    public SimlMfliGameState copyState() {
         int[][] newState = new int[columns][rows];
 
         for(int i = 0; i < columns; i++) {
             newState[i] = Arrays.copyOf(board[i], board[i].length);
         }
 
-        return new GameState(newState, lastCoinPosition);
+        return new SimlMfliGameState(newState, lastCoinPosition);
     }
 
     public void printState() {
@@ -166,7 +166,7 @@ public class GameState {
                 if(board[initialColumn - offset][initialRow] == playerID) {
                     // we found one more coin in succession of the previous coin
                     count++;
-                } else if(includeBlanks && board[initialColumn - offset][initialRow] == MiniMaxer.PLAYER_BLANK) {
+                } else if(includeBlanks && board[initialColumn - offset][initialRow] == SimlMfliMiniMaxer.PLAYER_BLANK) {
                     // we are also counting blank, or "available" spots on the board
                     count++;
                 } else {
@@ -177,7 +177,7 @@ public class GameState {
             if(checkRight) {
                 if(board[initialColumn + offset][initialRow] == playerID) {
                     count++;
-                } else if(includeBlanks && board[initialColumn + offset][initialRow] == MiniMaxer.PLAYER_BLANK) {
+                } else if(includeBlanks && board[initialColumn + offset][initialRow] == SimlMfliMiniMaxer.PLAYER_BLANK) {
                     count++;
                 } else {
                     checkRight = false;
@@ -224,7 +224,7 @@ public class GameState {
 
             if(checkUp) {
                 // no need to check for == playerID, since there are never coins above
-                if(board[initialColumn][initialRow - offset] == MiniMaxer.PLAYER_BLANK) {
+                if(board[initialColumn][initialRow - offset] == SimlMfliMiniMaxer.PLAYER_BLANK) {
                     count++;
                 } else {
                     checkDown = false;
@@ -260,7 +260,7 @@ public class GameState {
             if(checkLeft){
                 if (board[initialColumn - offset][initialRow - offset] == playerID) {
                     count++;
-                } else if(includeBlanks && board[initialColumn - offset][initialRow - offset] == MiniMaxer.PLAYER_BLANK) {
+                } else if(includeBlanks && board[initialColumn - offset][initialRow - offset] == SimlMfliMiniMaxer.PLAYER_BLANK) {
                     count++;
                 } else {
                     checkLeft = false;
@@ -269,7 +269,7 @@ public class GameState {
             if (checkRight){
                 if (board[initialColumn + offset][initialRow + offset] == playerID) {
                     count++;
-                } else if(includeBlanks && board[initialColumn + offset][initialRow + offset] == MiniMaxer.PLAYER_BLANK) {
+                } else if(includeBlanks && board[initialColumn + offset][initialRow + offset] == SimlMfliMiniMaxer.PLAYER_BLANK) {
                     count++;
                 } else {
                     checkRight = false;
@@ -304,7 +304,7 @@ public class GameState {
             if(checkLeft) {
                 if (board[initialColumn - offset][initialRow + offset] == playerID) {
                     count++;
-                } else if(includeBlanks && board[initialColumn - offset][initialRow + offset] == MiniMaxer.PLAYER_BLANK) {
+                } else if(includeBlanks && board[initialColumn - offset][initialRow + offset] == SimlMfliMiniMaxer.PLAYER_BLANK) {
                     count++;
                 } else {
                     checkLeft = false;
@@ -313,7 +313,7 @@ public class GameState {
             if (checkRight){
                 if (board[initialColumn + offset][initialRow - offset] == playerID) {
                     count++;
-                } else if(includeBlanks && board[initialColumn + offset][initialRow - offset] == MiniMaxer.PLAYER_BLANK) {
+                } else if(includeBlanks && board[initialColumn + offset][initialRow - offset] == SimlMfliMiniMaxer.PLAYER_BLANK) {
                     count++;
                 } else {
                     checkRight = false;

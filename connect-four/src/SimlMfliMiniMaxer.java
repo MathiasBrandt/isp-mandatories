@@ -4,7 +4,7 @@
  * @Author Mathias Flink Brandt.(mfli@itu.dk)
  * @Author Simon Langhoff (siml@itu.dk)
  */
-public class MiniMaxer {
+public class SimlMfliMiniMaxer {
     public final double UTILITY_MIN = -100;
     public final double UTILITY_MAX = 100;
     public final double UTILITY_TIE = 0;
@@ -18,7 +18,7 @@ public class MiniMaxer {
     /**
      * Our implementation of the Minimax Algorithm with pruning, cut-off and evaluation features.
      */
-    public MiniMaxer(int playerId) {
+    public SimlMfliMiniMaxer(int playerId) {
         aiPlayerId = playerId;
         if(playerId == PLAYER_MAX){
             otherPlayerId = PLAYER_MIN;
@@ -30,7 +30,7 @@ public class MiniMaxer {
     /**
      * In the current state, determine the best possible column to place a coin in.
      */
-    public int minimaxDecision(GameState state) {
+    public int minimaxDecision(SimlMfliGameState state) {
         int bestColumn = -1;
         double bestValue = Double.NEGATIVE_INFINITY;
 
@@ -39,7 +39,7 @@ public class MiniMaxer {
             // if the action is actually in the list of possible actions, i.e., if the column is NOT full
             if(!state.isColumnFull(i)) {
                 // calculate the minimax value for this column
-                GameState copyState = state.copyState();
+                SimlMfliGameState copyState = state.copyState();
                 copyState.insertCoin(i, aiPlayerId);
                 double value = minValue(copyState, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
                 if(value > bestValue){
@@ -56,7 +56,7 @@ public class MiniMaxer {
     /**
      * Returns the lowest utility value for the current state.
      */
-    private double minValue(GameState state, double alpha, double beta, int depth) {
+    private double minValue(SimlMfliGameState state, double alpha, double beta, int depth) {
         double finished = isGameFinished(state);
         if(!Double.isNaN(finished)){
             // The game is over, so return terminal value.
@@ -74,7 +74,7 @@ public class MiniMaxer {
         // try to perform each possible action and keep track of the best one
         for (int i = 0; i < state.getColumnCount(); i++) {
             if (!state.isColumnFull(i)) {
-                GameState copyState = state.copyState();
+                SimlMfliGameState copyState = state.copyState();
                 copyState.insertCoin(i, otherPlayerId);
                 result = Double.min(result, maxValue(copyState, alpha, beta, depth));
 
@@ -94,7 +94,7 @@ public class MiniMaxer {
     /**
      * Returns the highest utility value for the current state.
      */
-    private double maxValue(GameState state, double alpha, double beta, int depth) {
+    private double maxValue(SimlMfliGameState state, double alpha, double beta, int depth) {
         // NOTE: some comments have been omitted since they are more or less the same as in the minValue method
         double finished = isGameFinished(state);
         if(!Double.isNaN(finished)){
@@ -111,7 +111,7 @@ public class MiniMaxer {
         for(int i = 0; i < state.getColumnCount(); i++) {
             if(!state.isColumnFull(i)) {
                 // Copy the state first, then insert coin for the AI player.
-                GameState copyState = state.copyState();
+                SimlMfliGameState copyState = state.copyState();
                 copyState.insertCoin(i, aiPlayerId);
                 result = Double.max(result, minValue(copyState, alpha, beta, depth));
 
@@ -135,7 +135,7 @@ public class MiniMaxer {
     /**
      * Check if the game is finished, if so, return the utility value of the state.
      */
-    private double isGameFinished(GameState state){
+    private double isGameFinished(SimlMfliGameState state){
         IGameLogic.Winner winner = state.gameFinished();
         if(winner != IGameLogic.Winner.NOT_FINISHED){
             // The game has ended
@@ -160,7 +160,7 @@ public class MiniMaxer {
      * Counts the maximum amount of coins that are connected in a row based upon the lastCoinPosition.
      * Counts for both the current player and the opponent and returns the highest value.
      */
-    public int maxCoinsInARow(GameState state){
+    public int maxCoinsInARow(SimlMfliGameState state){
         int initialColumn = state.getLastCoinPosition().fst;
         int initialRow = state.getLastCoinPosition().snd;
         int playerID = state.getBoard()[initialColumn][initialRow];
@@ -184,16 +184,16 @@ public class MiniMaxer {
     /**
      * Counts the number of axes that is a possible win (i.e., has 4 coins or blanks in a row)
      */
-    public int winCombinationsCount(GameState state){
+    public int winCombinationsCount(SimlMfliGameState state){
         int initialColumn = state.getLastCoinPosition().fst;
         int initialRow = state.getLastCoinPosition().snd;
         int playerID = state.getBoard()[initialColumn][initialRow];
 
         int possibleWins = 0;
-        if(state.checkHorizontal(playerID, initialColumn, initialRow, true) >= GameState.WIN_CONDITION) { possibleWins++; }
-        if(state.checkVertical(playerID, initialColumn, initialRow, true) >= GameState.WIN_CONDITION) { possibleWins++; }
-        if(state.checkDiagonalOne(playerID, initialColumn, initialRow, true) >= GameState.WIN_CONDITION) { possibleWins++; }
-        if(state.checkDiagonalTwo(playerID, initialColumn, initialRow, true) >= GameState.WIN_CONDITION) { possibleWins++; }
+        if(state.checkHorizontal(playerID, initialColumn, initialRow, true) >= SimlMfliGameState.WIN_CONDITION) { possibleWins++; }
+        if(state.checkVertical(playerID, initialColumn, initialRow, true) >= SimlMfliGameState.WIN_CONDITION) { possibleWins++; }
+        if(state.checkDiagonalOne(playerID, initialColumn, initialRow, true) >= SimlMfliGameState.WIN_CONDITION) { possibleWins++; }
+        if(state.checkDiagonalTwo(playerID, initialColumn, initialRow, true) >= SimlMfliGameState.WIN_CONDITION) { possibleWins++; }
 
         return possibleWins;
     }
@@ -202,7 +202,7 @@ public class MiniMaxer {
      * Looks up the static evaluation table and returns a value based on the lastCoinPosition.
      * Credit goes to: http://programmers.stackexchange.com/questions/263514/why-does-this-evaluation-function-work-in-a-connect-four-game-in-java
      */
-    public int coinPositionValue(GameState state){
+    public int coinPositionValue(SimlMfliGameState state){
         // For now, this is only implemented for a 7x6 board.
         if(!(state.getColumnCount() == 7) || !(state.getRowCount() == 6)){
             return 0;
@@ -227,7 +227,7 @@ public class MiniMaxer {
      * If the game has finished in the current state, i.e., the board is full or one of the
      * players has won, return the corresponding utility value. Otherwise return -1.
      */
-    private double eval(GameState state){
+    private double eval(SimlMfliGameState state){
         // Get info for last placed coin.
         int column = state.getLastCoinPosition().fst;
         int row = state.getLastCoinPosition().snd;
@@ -239,7 +239,7 @@ public class MiniMaxer {
         score += positionValue;
 
         int coinsInARow = maxCoinsInARow(state);
-        if(coinsInARow >= GameState.WIN_CONDITION ){
+        if(coinsInARow >= SimlMfliGameState.WIN_CONDITION ){
             return UTILITY_MAX;
         } else {
             if(playerID == aiPlayerId){

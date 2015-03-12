@@ -1,9 +1,3 @@
-import com.sun.tools.javac.util.Pair;
-
-import java.io.Console;
-import java.util.Arrays;
-import java.util.Random;
-
 /**
  * Intelligent Systems Programming
  * Connect Four
@@ -11,13 +5,13 @@ import java.util.Random;
  * @Author Simon Langhoff (siml@itu.dk)
  */
 public class SimlMfliGameLogic implements IGameLogic {
-    private GameState gameState;
-    private MiniMaxer miniMaxer;
+    private SimlMfliGameState gameState;
+    private SimlMfliMiniMaxer miniMaxer;
 
     @Override
     public void initializeGame(int columns, int rows, int playerID) {
-        gameState = new GameState(columns, rows);
-        miniMaxer = new MiniMaxer(playerID);
+        gameState = new SimlMfliGameState(columns, rows);
+        miniMaxer = new SimlMfliMiniMaxer(playerID);
     }
 
     @Override
