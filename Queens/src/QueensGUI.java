@@ -26,20 +26,20 @@ public class QueensGUI extends JComponent implements MouseListener
 	 */
 	public QueensGUI(QueensLogic logic)
 	{
-		part = Toolkit.getDefaultToolkit().getImage("imgs/maze.png");
-		queen = Toolkit.getDefaultToolkit().getImage("imgs/queen.png");
-		invalid = Toolkit.getDefaultToolkit().getImage("imgs/invalid.png");
-		backgroundW = Toolkit.getDefaultToolkit().getImage("imgs/backgroundWhite.png");
-        backgroundB = Toolkit.getDefaultToolkit().getImage("imgs/backgroundBlack.png");
+		part = Toolkit.getDefaultToolkit().getImage("src/imgs/maze.png");
+		queen = Toolkit.getDefaultToolkit().getImage("src/imgs/queen.png");
+		invalid = Toolkit.getDefaultToolkit().getImage("src/imgs/invalid.png");
+		backgroundW = Toolkit.getDefaultToolkit().getImage("src/imgs/backgroundWhite.png");
+        backgroundB = Toolkit.getDefaultToolkit().getImage("/srcimgs/backgroundBlack.png");
 		
-		border_left = Toolkit.getDefaultToolkit().getImage("imgs/board_left.png");
-		border_right = Toolkit.getDefaultToolkit().getImage("imgs/board_right.png");
-		border_top = Toolkit.getDefaultToolkit().getImage("imgs/board_top.png");
-		border_bottom = Toolkit.getDefaultToolkit().getImage("imgs/board_bottom.png");
-		corner_left_top = Toolkit.getDefaultToolkit().getImage("imgs/corner_top_left.png");
-		corner_left_bottom = Toolkit.getDefaultToolkit().getImage("imgs/corner_bottom_left.png");
-		corner_right_top = Toolkit.getDefaultToolkit().getImage("imgs/corner_top_right.png");
-		corner_right_bottom = Toolkit.getDefaultToolkit().getImage("imgs/corner_bottom_right.png");
+		border_left = Toolkit.getDefaultToolkit().getImage("src/imgs/board_left.png");
+		border_right = Toolkit.getDefaultToolkit().getImage("src/imgs/board_right.png");
+		border_top = Toolkit.getDefaultToolkit().getImage("src/imgs/board_top.png");
+		border_bottom = Toolkit.getDefaultToolkit().getImage("src/imgs/board_bottom.png");
+		corner_left_top = Toolkit.getDefaultToolkit().getImage("src/imgs/corner_top_left.png");
+		corner_left_bottom = Toolkit.getDefaultToolkit().getImage("src/imgs/corner_bottom_left.png");
+		corner_right_top = Toolkit.getDefaultToolkit().getImage("src/imgs/corner_top_right.png");
+		corner_right_bottom = Toolkit.getDefaultToolkit().getImage("src/imgs/corner_bottom_right.png");
 		
 		this.logic = logic;
 		this.addMouseListener(this);
