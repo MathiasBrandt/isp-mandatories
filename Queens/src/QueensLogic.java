@@ -15,6 +15,7 @@ public class QueensLogic {
     private int N = 0;
     private int[][] board;
     private BDDFactory factory;
+    private BDD nQueensBdd;
     private int[][] lookupTable;    // [col][row]
 
     public QueensLogic() {
@@ -29,35 +30,15 @@ public class QueensLogic {
         buildLookupTable();
         printLookupTable();
 
-        /*
-        // init vars
         int nodeCount = 2000000;
         int cacheSize = (int)(nodeCount * 0.10);
 
         factory = JFactory.init(nodeCount, cacheSize);
-        factory.setVarNum(size * size);
+        factory.setVarNum(N * N);
 
-        // Assign rules for each variable
-        for(int n = 0; n < size * size; n++){
-            BDD var = null;
+        nQueensBdd = factory.one();
 
-            // Max 1 queen per column
-            for(int i = 0; i < size; i++){
-
-                if(n != i){
-                    if(var == null){
-                        var = factory.nithVar(n).or(factory.nithVar(i));
-                    } else {
-                        var = var.and(factory.nithVar(n).or(factory.nithVar(i))); // (!A || !B) && (!A || !D) ...
-                    }
-                }
-            }
-
-            // Max 1 queen per row
-            for(int i = 0; i < size; i++){
-
-            }
-        }*/
+        buildRules();
     }
 
    
@@ -66,55 +47,83 @@ public class QueensLogic {
     }
 
     public boolean insertQueen(int column, int row) {
-        if (board[column][row] == -1 || board[column][row] == 1) {
+        if (board[column][row] == 0 || board[column][row] == 1) {
             return true;
         }
         
         board[column][row] = 1;
 
-        // restrictBDD(factory column, row);
-        
-        // put some logic here..
-      
+        restrictOnInsert(column, row);
+
+        nQueensBdd.printSet();
+
         return true;
     }
 
-    public BDD restrictBDD(BDD board, int column, int row){
-//        BDD restriction = null;
-//        for(int i = 0; i < cols; i++){
-//            if(i != column){
-//                if(restriction == null){
-//                    restriction = factory.nithVar(i);
-//                } else {
-//                    restriction.and(factory.nithVar(i));
-//                }
-//            }
-//        }
-//
-//        board.printSet();
-//        board = board.restrict(restriction);
-//        board.printSet();
-//
-//        for(int j = 0; j < rows; j++){
-//
-//
-//        }
-//
-//        return board;
+    public void restrictOnInsert(int col, int row) {
+        BDD restriction = factory.one();
+        int var = lookupTable[col][row];
 
-        return null;
+        List<Integer> restrictVars = getRestrictPositions(var);
+
+        for(Integer restrictVar : restrictVars) {
+            restriction.and(factory.nithVar(restrictVar));
+        }
+
+        nQueensBdd = nQueensBdd.restrict(restriction);
+    }
+
+    private void buildRules() {
+        for(int var = 0; var < N * N; var++) {
+            maxOneQueenPerColumn(var);
+            maxOneQueenPerRow(var);
+            maxOneQueenInDiagonalOne(var);
+            maxOneQueenInDiagonalTwo(var);
+        }
+    }
+
+    private void maxOneQueenPerColumn(int var) {
+        List<Integer> restricts = getHorizontalRestrictPositions(var);
+
+        for(int restrictVar : restricts) {
+            nQueensBdd = nQueensBdd.and(factory.nithVar(var).or(factory.nithVar(restrictVar)));
+        }
+    }
+
+    private void maxOneQueenPerRow(int var) {
+        List<Integer> restricts = getVerticalRestrictPositions(var);
+
+        for(int restrictVar : restricts) {
+            nQueensBdd = nQueensBdd.and(factory.nithVar(var).or(factory.nithVar(restrictVar)));
+        }
+    }
+
+    private void maxOneQueenInDiagonalOne(int var) {
+        List<Integer> restricts = getDiagonalOneRestrictPositions(var);
+
+        for(int restrictVar : restricts) {
+            nQueensBdd = nQueensBdd.and(factory.nithVar(var).or(factory.nithVar(restrictVar)));
+        }
+    }
+
+    private void maxOneQueenInDiagonalTwo(int var) {
+        List<Integer> restricts = getDiagonalTwoRestrictPositions(var);
+
+        for(int restrictVar : restricts) {
+            nQueensBdd = nQueensBdd.and(factory.nithVar(var).or(factory.nithVar(restrictVar)));
+        }
     }
 
     /**
      * Return a list of indices that will be affected by positioning a queen at the specified index.
-     * @param index The index where the next queen will be placed.
+     * @param var The index where the next queen will be placed.
      * @return The list of affected indices.
      */
-    public List<Integer> getRestrictPositions(int index){
-        List<Integer> result = getHorizontalRestrictPositions(index);
-        result.addAll(getVerticalRestrictPositions(index));
-        result.addAll(getDiagonalOneRestrictPositions(index));
-        result.addAll(getDiagonalTwoRestrictPositions(index));
+    private List<Integer> getRestrictPositions(int var){
+        List<Integer> result = getHorizontalRestrictPositions(var);
+        result.addAll(getVerticalRestrictPositions(var));
+        result.addAll(getDiagonalOneRestrictPositions(var));
+        result.addAll(getDiagonalTwoRestrictPositions(var));
 
         return result;
     }
@@ -122,8 +131,6 @@ public class QueensLogic {
     private List<Integer> getHorizontalRestrictPositions(int var) {
         // find out which row we're in
         int row = (int) Math.floor(var/ N);
-
-        System.out.println(String.format("restricting var %d in row %d", var, row));
 
         List<Integer> result = new ArrayList<Integer>();
 
@@ -139,8 +146,6 @@ public class QueensLogic {
     private List<Integer> getVerticalRestrictPositions(int var) {
         // find out which column we're in
         int col = var % N;
-
-        System.out.println(String.format("restricting var %d in col %d", var, col));
 
         List<Integer> result = new ArrayList<Integer>();
 
