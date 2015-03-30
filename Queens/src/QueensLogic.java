@@ -111,15 +111,15 @@ public class QueensLogic {
      * @return The list of affected indices.
      */
     public List<Integer> getRestrictPositions(int index){
-        List<Integer> result = restrictHorizontal(index);
-        result.addAll(restrictVertical(index));
-        result.addAll(restrictDiagonalOne(index));
-        result.addAll(restrictDiagonalTwo(index));
+        List<Integer> result = getHorizontalRestrictPositions(index);
+        result.addAll(getVerticalRestrictPositions(index));
+        result.addAll(getDiagonalOneRestrictPositions(index));
+        result.addAll(getDiagonalTwoRestrictPositions(index));
 
         return result;
     }
 
-    private List<Integer> restrictHorizontal(int var) {
+    private List<Integer> getHorizontalRestrictPositions(int var) {
         // find out which row we're in
         int row = (int) Math.floor(var/ N);
 
@@ -136,7 +136,7 @@ public class QueensLogic {
         return result;
     }
 
-    private List<Integer> restrictVertical(int var) {
+    private List<Integer> getVerticalRestrictPositions(int var) {
         // find out which column we're in
         int col = var % N;
 
@@ -153,7 +153,7 @@ public class QueensLogic {
         return result;
     }
 
-    private List<Integer> restrictDiagonalOne(int var) {
+    private List<Integer> getDiagonalOneRestrictPositions(int var) {
         int col = var % N;
         int row = (int) Math.floor(var/ N);
         int offset = 1;
@@ -187,7 +187,7 @@ public class QueensLogic {
         return result;
     }
 
-    private List<Integer> restrictDiagonalTwo(int var) {
+    private List<Integer> getDiagonalTwoRestrictPositions(int var) {
         int col = var % N;
         int row = (int) Math.floor(var/ N);
         int offset = 1;
