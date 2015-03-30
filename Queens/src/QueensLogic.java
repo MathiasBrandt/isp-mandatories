@@ -10,37 +10,26 @@ import java.util.*;
 import net.sf.javabdd.*;
 
 public class QueensLogic {
-    private int x = 0;
-    private int y = 0;
-    private int size = 0;
+//    private int cols = 0;
+//    private int rows = 0;
+    private int N = 0;
     private int[][] board;
     private BDDFactory factory;
-    private int[][] lookupTable;
+    private int[][] lookupTable;    // [col][row]
 
     public QueensLogic() {
        //constructor
     }
 
     public void initializeGame(int size) {
-        this.x = size;
-        this.y = size;
-        this.size = size;
-        this.board = new int[x][y];
+        this.N = size;
+        this.board = new int[N][N];
 
         // Initialize Lookup table.
-        lookupTable = new int[x][y];
+        buildLookupTable();
+        printLookupTable();
 
-        int count = 0;
-        for(int i = 0; i < size; i++){
-            for(int j = 0; j < size; j ++){
-                lookupTable[i][j] = count;
-                count++;
-            }
-        }
-
-        List<Integer> test = getRestrictPositions(11);
-        Collections.sort(test);
-
+        /*
         // init vars
         int nodeCount = 2000000;
         int cacheSize = (int)(nodeCount * 0.10);
@@ -68,7 +57,7 @@ public class QueensLogic {
             for(int i = 0; i < size; i++){
 
             }
-        }
+        }*/
     }
 
    
@@ -91,96 +80,177 @@ public class QueensLogic {
     }
 
     public BDD restrictBDD(BDD board, int column, int row){
-        BDD restriction = null;
-        for(int i = 0; i < x; i++){
-            if(i != column){
-                if(restriction == null){
-                    restriction = factory.nithVar(i);
-                } else {
-                    restriction.and(factory.nithVar(i));
-                }
-            }
-        }
-
-        board.printSet();
-        board = board.restrict(restriction);
-        board.printSet();
-
-//        for(int j = 0; j < y; j++){
+//        BDD restriction = null;
+//        for(int i = 0; i < cols; i++){
+//            if(i != column){
+//                if(restriction == null){
+//                    restriction = factory.nithVar(i);
+//                } else {
+//                    restriction.and(factory.nithVar(i));
+//                }
+//            }
+//        }
+//
+//        board.printSet();
+//        board = board.restrict(restriction);
+//        board.printSet();
+//
+//        for(int j = 0; j < rows; j++){
 //
 //
 //        }
+//
+//        return board;
 
-        return board;
+        return null;
     }
 
+    /**
+     * Return a list of indices that will be affected by positioning a queen at the specified index.
+     * @param index The index where the next queen will be placed.
+     * @return The list of affected indices.
+     */
     public List<Integer> getRestrictPositions(int index){
-        ArrayList<Integer> result = new ArrayList<Integer>();
+        List<Integer> result = restrictHorizontal(index);
+        result.addAll(restrictVertical(index));
+        result.addAll(restrictDiagonalOne(index));
+        result.addAll(restrictDiagonalTwo(index));
 
-        // Calculate lookup coordinates corresponding to index.
-        int row = (int)Math.floor(index / size);
-        int column = index % size;
+        return result;
+    }
 
-        // Add horizontal and vertical values to result
-        for(int i = 0; i < size; i++){
-            if(lookupTable[row][i] != index){
-                result.add(lookupTable[row][i]);
-            }
-            if(lookupTable[i][column] != index){
-                result.add(lookupTable[i][column]);
+    private List<Integer> restrictHorizontal(int var) {
+        // find out which row we're in
+        int row = (int) Math.floor(var/ N);
+
+        System.out.println(String.format("restricting var %d in row %d", var, row));
+
+        List<Integer> result = new ArrayList<Integer>();
+
+        for(int col = 0; col < N; col++) {
+            if(lookupTable[col][row] != var) {
+                result.add(lookupTable[col][row]);
             }
         }
 
+        return result;
+    }
+
+    private List<Integer> restrictVertical(int var) {
+        // find out which column we're in
+        int col = var % N;
+
+        System.out.println(String.format("restricting var %d in col %d", var, col));
+
+        List<Integer> result = new ArrayList<Integer>();
+
+        for(int row = 0; row < N; row++) {
+            if(lookupTable[col][row] != var) {
+                result.add(lookupTable[col][row]);
+            }
+        }
+
+        return result;
+    }
+
+    private List<Integer> restrictDiagonalOne(int var) {
+        int col = var % N;
+        int row = (int) Math.floor(var/ N);
+        int offset = 1;
         boolean checkLeft = true;
         boolean checkRight = true;
+        List<Integer> result = new ArrayList<Integer>();
+
+        while(checkLeft || checkRight) {
+            if(col - offset < 0 || row - offset < 0) {
+                checkLeft = false;
+            }
+            if(col + offset >= N || row + offset >= N) {
+                checkRight = false;
+            }
+
+            if(checkLeft) {
+                if(lookupTable[col - offset][row - offset] != var) {
+                    result.add(lookupTable[col - offset][row - offset]);
+                }
+            }
+
+            if(checkRight) {
+                if(lookupTable[col + offset][row + offset] != var) {
+                    result.add(lookupTable[col + offset][row + offset]);
+                }
+            }
+
+            offset++;
+        }
+
+        return result;
+    }
+
+    private List<Integer> restrictDiagonalTwo(int var) {
+        int col = var % N;
+        int row = (int) Math.floor(var/ N);
         int offset = 1;
-        while(checkLeft || checkRight){
-            if(row - offset < 0  || column - offset < 0){
+        boolean checkLeft = true;
+        boolean checkRight = true;
+        List<Integer> result = new ArrayList<Integer>();
+
+        while(checkLeft || checkRight) {
+            if(col - offset < 0 || row + offset >= N) {
                 checkLeft = false;
-            } if(column + offset >= size || row + offset >= size) {
+            }
+            if(col + offset >= N || row - offset < 0) {
                 checkRight = false;
             }
-            if(checkLeft){
-                int value = lookupTable[column - offset][row - offset];
-                if(value != index){
-                    result.add(value);
-                }
 
-            }
-            if(checkRight){
-                int value = lookupTable[column + offset][row + offset];
-                if(value != index){
-                    result.add(value);
+            if(checkLeft) {
+                if(lookupTable[col - offset][row + offset] != var) {
+                    result.add(lookupTable[col - offset][row + offset]);
                 }
             }
+
+            if(checkRight) {
+                if(lookupTable[col + offset][row - offset] != var) {
+                    result.add(lookupTable[col + offset][row - offset]);
+                }
+            }
+
             offset++;
         }
 
-        checkLeft = true;
-        checkRight = true;
-        offset = 1;
-        while(checkLeft || checkRight){
-            if(row + offset >= size  || column - offset < 0){
-                checkLeft = false;
-            } if(column + offset >= size || row - offset < 0) {
-                checkRight = false;
-            }
-            if(checkLeft){
-                int value = lookupTable[column - offset][row + offset];
-                if(value != index){
-                    result.add(value);
-                }
+        return result;
+    }
 
+    private void buildLookupTable() {
+        lookupTable = new int[N][N];
+
+        int count = 0;
+        for(int row = 0; row < N; row++) {
+            for(int col = 0; col < N; col++) {
+                lookupTable[col][row] = count;
+                count++;
             }
-            if(checkRight){
-                int value = lookupTable[column + offset][row - offset];
-                if(value != index){
-                    result.add(value);
-                }
-            }
-            offset++;
         }
+    }
 
-    return result;
+    private void printLookupTable() {
+        System.out.print("   ");
+        for(int i = 0; i < N; i++) {
+            System.out.print(i + "  ");
+        }
+        System.out.println();
+
+        for(int row = 0; row < N; row++) {
+            System.out.print(row + "  ");
+
+            for(int col = 0; col < N; col++) {
+                if(lookupTable[col][row] < 10) {
+                    System.out.print(0);
+                }
+                System.out.print(lookupTable[col][row] + " ");
+            }
+
+            System.out.println();
+        }
     }
 }
