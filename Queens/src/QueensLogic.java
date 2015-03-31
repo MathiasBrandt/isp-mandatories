@@ -69,7 +69,6 @@ public class QueensLogic {
         System.out.println("isOne: " + nQueensBdd.isOne());
         System.out.println("pathCount: " + nQueensBdd.pathCount());
 
-
         return true;
     }
 
@@ -119,6 +118,7 @@ public class QueensLogic {
             maxOneQueenPerRow(var);
             maxOneQueenInDiagonalOne(var);
             maxOneQueenInDiagonalTwo(var);
+            atLeastOneQueenPerColumn();
         }
     }
 
@@ -158,7 +158,7 @@ public class QueensLogic {
         BDD totalRestriction = factory.one();
 
         for(int col = 0; col < N; col++) {
-            BDD columnRestriction = factory.one();
+            BDD columnRestriction = factory.zero();
 
             for(int row = 0; row < N; row++) {
                 int var = lookupTable[col][row];
