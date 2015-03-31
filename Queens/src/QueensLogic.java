@@ -5,8 +5,10 @@
  * @author Stavros Amanatidis
  *
  */
+import java.security.InvalidParameterException;
 import java.util.*;
 
+import com.sun.tools.javac.util.Pair;
 import net.sf.javabdd.*;
 
 public class QueensLogic {
@@ -17,6 +19,7 @@ public class QueensLogic {
     private BDDFactory factory;
     private BDD nQueensBdd;
     private int[][] lookupTable;    // [col][row]
+    private List<Integer> queens;
 
     public QueensLogic() {
        //constructor
@@ -25,6 +28,8 @@ public class QueensLogic {
     public void initializeGame(int size) {
         this.N = size;
         this.board = new int[N][N];
+
+        queens = new ArrayList<Integer>();
 
         // Initialize Lookup table.
         buildLookupTable();
@@ -47,13 +52,17 @@ public class QueensLogic {
     }
 
     public boolean insertQueen(int column, int row) {
-        if (board[column][row] == 0 || board[column][row] == 1) {
+        if (board[column][row] == -1 || board[column][row] == 1) {
             return true;
         }
+
+        queens.add(lookupTable[column][row]);
         
         board[column][row] = 1;
 
         restrictOnInsert(column, row);
+
+        updateBoardPositions();
 
         nQueensBdd.printSet();
 
@@ -67,10 +76,33 @@ public class QueensLogic {
         List<Integer> restrictVars = getRestrictPositions(var);
 
         for(Integer restrictVar : restrictVars) {
-            restriction.and(factory.nithVar(restrictVar));
+            restriction = restriction.and(factory.nithVar(restrictVar));
         }
 
         nQueensBdd = nQueensBdd.restrict(restriction);
+    }
+
+    private void updateBoardPositions() {
+        for(Integer queen : queens) {
+            List<Integer> restrictPositions = getRestrictPositions(queen);
+
+            for(Integer restrictPosition : restrictPositions) {
+                Pair<Integer, Integer> p = getColRow(restrictPosition);
+                board[p.fst][p.snd] = -1;
+            }
+        }
+    }
+
+    private Pair<Integer, Integer> getColRow(int var) {
+        for(int i = 0; i < N; i++) {
+            for(int j = 0; j < N; j++) {
+                if(lookupTable[i][j] == var) {
+                    return new Pair<Integer, Integer>(i, j);
+                }
+            }
+        }
+
+        throw new InvalidParameterException("Var " + var + " was not found in lookup table");
     }
 
     private void buildRules() {
