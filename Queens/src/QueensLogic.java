@@ -64,10 +64,14 @@ public class QueensLogic {
 
         updateBoardPositions();
 
-        //nQueensBdd.printSet();
+        nQueensBdd.printSet();
 
         System.out.println("isOne: " + nQueensBdd.isOne());
         System.out.println("pathCount: " + nQueensBdd.pathCount());
+
+        if(nQueensBdd.pathCount() == 0) {
+
+        }
 
         return true;
     }
@@ -96,6 +100,32 @@ public class QueensLogic {
             for(Integer restrictPosition : restrictPositions) {
                 Pair<Integer, Integer> p = getColRow(restrictPosition);
                 board[p.fst][p.snd] = -1;
+            }
+        }
+
+        // block positions that do not lead to a solution
+        HashMap<Integer, Integer> positionValues = new HashMap<Integer, Integer>();
+        List<byte[]> solutions = nQueensBdd.allsat();
+
+        for(byte[] solution : solutions) {
+            for(int var = 0; var < solution.length; var++) {
+                if(!positionValues.containsKey(var)) {
+                    positionValues.put(var, (int) solution[var]);
+                } else {
+                    if(positionValues.get(var) < 1) {
+                        positionValues.put(var, (int) solution[var]);
+                    }
+                }
+            }
+        }
+
+        for(Integer i : positionValues.keySet()) {
+            if(positionValues.get(i) <= 0) {
+                Pair<Integer, Integer> p = getColRow(i);
+                // only set position to -1 if a queen is not present
+                if(board[p.fst][p.snd] != 1) {
+                    board[p.fst][p.snd] = -1;
+                }
             }
         }
     }
