@@ -44,6 +44,7 @@ public class QueensLogic {
         nQueensBdd = factory.one();
 
         buildRules();
+        updateBoardPositions();
     }
 
    
@@ -126,6 +127,23 @@ public class QueensLogic {
                 if(board[p.fst][p.snd] != 1) {
                     board[p.fst][p.snd] = -1;
                 }
+            }
+        }
+
+        for(int col = 0; col < N; col++) {
+            int availablePositions = 0;
+            int availableRow = -1;
+
+            for(int row = 0; row < N; row++) {
+                if(board[col][row] == 0) {
+                    availablePositions++;
+                    availableRow = row;
+                }
+            }
+
+            if(availablePositions == 1) {
+                insertQueen(col, availableRow);
+                break;
             }
         }
     }
