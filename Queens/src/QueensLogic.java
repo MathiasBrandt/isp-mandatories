@@ -64,19 +64,27 @@ public class QueensLogic {
 
         updateBoardPositions();
 
-        nQueensBdd.printSet();
+        //nQueensBdd.printSet();
+
+        System.out.println("isOne: " + nQueensBdd.isOne());
+        System.out.println("pathCount: " + nQueensBdd.pathCount());
+
 
         return true;
     }
 
     public void restrictOnInsert(int col, int row) {
         BDD restriction = factory.one();
-        int var = lookupTable[col][row];
 
-        List<Integer> restrictVars = getRestrictPositions(var);
+        for(Integer queen : queens) {
+            restriction = restriction.and(factory.ithVar(queen));
 
-        for(Integer restrictVar : restrictVars) {
-            restriction = restriction.and(factory.nithVar(restrictVar));
+            List<Integer> restrictVars = getRestrictPositions(queen);
+
+            for(Integer restrictVar : restrictVars) {
+                restriction = restriction.and(factory.nithVar(restrictVar));
+            }
+
         }
 
         nQueensBdd = nQueensBdd.restrict(restriction);
@@ -144,6 +152,23 @@ public class QueensLogic {
         for(int restrictVar : restricts) {
             nQueensBdd = nQueensBdd.and(factory.nithVar(var).or(factory.nithVar(restrictVar)));
         }
+    }
+
+    private void atLeastOneQueenPerColumn() {
+        BDD totalRestriction = factory.one();
+
+        for(int col = 0; col < N; col++) {
+            BDD columnRestriction = factory.one();
+
+            for(int row = 0; row < N; row++) {
+                int var = lookupTable[col][row];
+                columnRestriction = columnRestriction.or(factory.ithVar(var));
+            }
+
+            totalRestriction = totalRestriction.and(columnRestriction);
+        }
+
+        nQueensBdd = nQueensBdd.and(totalRestriction);
     }
 
     /**
