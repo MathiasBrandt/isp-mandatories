@@ -58,25 +58,22 @@ public class QueensLogic {
         }
 
         queens.add(lookupTable[column][row]);
-        
+
+        // update the GUI's underlying data structure (i.e., place a queen)
         board[column][row] = 1;
 
         restrictOnInsert(column, row);
 
         updateBoardPositions();
 
-        nQueensBdd.printSet();
-
-        System.out.println("isOne: " + nQueensBdd.isOne());
-        System.out.println("pathCount: " + nQueensBdd.pathCount());
-
-        if(nQueensBdd.pathCount() == 0) {
-
-        }
-
         return true;
     }
 
+    /**
+     * Restricts the BDD according to the placement of a queen in the specified column and row.
+     * The queen's placement is restricted to TRUE, while positions threatened by the queen are
+     * restricted to FALSE.
+     */
     public void restrictOnInsert(int col, int row) {
         BDD restriction = factory.one();
 
@@ -94,7 +91,12 @@ public class QueensLogic {
         nQueensBdd = nQueensBdd.restrict(restriction);
     }
 
+    /**
+     * The method updates the underlying data structure of the board in the graphical
+     * user interface. The GUI will automatically put crosses on invalid positions.
+     */
     private void updateBoardPositions() {
+        // block positions that are immediately threatened by a queen
         for(Integer queen : queens) {
             List<Integer> restrictPositions = getRestrictPositions(queen);
 
@@ -130,6 +132,7 @@ public class QueensLogic {
             }
         }
 
+        // If a column only has a single available position, insert a queen at that position
         for(int col = 0; col < N; col++) {
             int availablePositions = 0;
             int availableRow = -1;
